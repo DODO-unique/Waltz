@@ -90,7 +90,7 @@ class OAuthAuthenticateResponse(IdentityServiceSchema):
     updated_at: datetime
 
 
-# ------------------ OAuth
+# ------------------ Serenity 
 
 class OAuthSchema(BaseModel):
     pass
@@ -136,6 +136,19 @@ class AuthorizationFailure(BaseAuthorizationResponse):
     error_url: str
 
 AuthorizationResponse = AuthorizationSuccess | AuthorizationFailure 
+
+class CredentialsTicket(BaseModel):
+    '''
+    A credentials ticket simply requests by provider name. 
+    All details registered by the providername are requested.
+
+        ```python
+        id: UUID = uuid4()
+        provider = Literal["google", "microsoft", "github", "discord", "linkedin", "custom"]
+        ```
+    '''
+    id: UUID = Field(default_factory=uuid4)
+    provider: ProviderName
 
 # ------------------- Session
 
