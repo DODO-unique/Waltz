@@ -1,7 +1,9 @@
-from ..validators.core_validator import IdentityPayload, SessionRequest,TicketType
-from general import publish_ticket, get_id
+from uuid import UUID, uuid4
+
 from enums import Session
-from uuid import uuid4, UUID
+from general import get_id, publish_ticket
+
+from ..validators.core_validator import IdentityPayload, SessionRequest, TicketType
 
 
 class SessionManager:
