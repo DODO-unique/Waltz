@@ -106,21 +106,6 @@ class Address(BaseModel):
 class Addresses(BaseModel):
     address : list[Address]
 
-
-class BaseAuthorizationResponse(BaseModel):
-    provider: "ProviderName"
-    state: str
-
-class AuthorizationSuccess(BaseAuthorizationResponse):
-    status: Literal["success"]
-    code: str
-
-class AuthorizationFailure(BaseAuthorizationResponse):
-    status: Literal["failure"]
-    error: str
-    error_description: str
-    error_url: str
-
 ProviderName = Literal["google", "microsoft", "github", "discord", "linkedin", "custom"]
 
 Uid: TypeAlias = str | UUID
