@@ -38,7 +38,7 @@ async def destroy(token: UUID):
         )
     )
 
-async def check_token(token: UUID) -> bool:
+async def validate(token: UUID) -> bool:
     predicate = await publish_ticket(
         TicketType(
             id=uuid4(),
@@ -48,9 +48,6 @@ async def check_token(token: UUID) -> bool:
     )
 
     return predicate
-
-async def validate(token: UUID):
-    return check_token(token)
 
 async def destroy_all(identiy: IdentityPayload):
     uid = await get_id(identity=identiy)
