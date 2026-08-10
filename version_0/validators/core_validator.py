@@ -49,23 +49,24 @@ class IdentityServiceSchema(BaseModel):
 
 class BaseRegisterPayload(IdentityServiceSchema):
     id: Uid = Field(default_factory=uuid4) # NOTE: sub comes here as string, local handles UUID
-    name: str | None
-    uname: str | None
-    mail: Mail | None
-    gender: Literal["male", "female", "non_binary", "prefer_not_to_say", "self_describe"] | None
-    birthdate: datetime | None
-    addr: Addresses | None
-    picture: AnyHttpUrl | None
+    name: str | None = None
+    uname: str | None = None
+    mail: Mail | None = None
+    gender: Literal["male", "female", "non_binary", "prefer_not_to_say", "self_describe"] | None = None
+    birthdate: datetime | None = None
+    addr: Addresses | None = None
+    picture: AnyHttpUrl | None = None
 
 class OAuth(BaseRegisterPayload):
-    profile: AnyHttpUrl | None
-    website: AnyHttpUrl | None
-    zoneinfo: str | None
-    locale: str | None
+    profile: AnyHttpUrl | None = None
+    website: AnyHttpUrl | None = None
+    zoneinfo: str | None = None
+    locale: str | None = None
     updated_at: datetime # compare for changes
 
 class WaltzAuth(BaseRegisterPayload):
     password: Password
+
 
 class IdentityPayload(IdentityServiceSchema):
     '''
@@ -206,4 +207,3 @@ class TicketType(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     type: OperationIntentions[Any, Any]
     payload: OAuth | WaltzAuth | IdentityPayload | Uid | SessionRequest
-
