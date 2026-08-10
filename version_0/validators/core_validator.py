@@ -82,11 +82,28 @@ class OAuthRegistration(BaseRegisterPayload):
     updated_at: datetime # compare for changes
 
 class LocalAuthRegistrationPayload(BaseRegisterPayload):
+    '''
+    Used only and only for Local Auth registration.
+        ```python
+        Required
+        id: str | UUID = uuid4() 
+        identity: IdentityPayload
+        password: Password
+
+        Optional
+        name: str | None = None
+        gender: Literal["male", "female", "non_binary", "prefer_not_to_say", "self_describe"] | None = None
+        birthdate: datetime | None = None
+        addr: Addresses | None = None
+        picture: AnyHttpUrl | None = None
+        ```
+    
+    '''
     password: Password
 
 class OAuthAuthPayload(BaseModel):
     sub: str #the sub is the only thing we need to compare
-    
+    updated_at: datetime
 
 
 # ------------------ Serenity 
