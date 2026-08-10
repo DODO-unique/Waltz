@@ -70,7 +70,7 @@ class User:
 
 
 class Session:
-    Create: OperationIntentions[SessionRequest, None] = OperationIntentions(
+    Create: OperationIntentions[SessionRequest, UUID] = OperationIntentions(
         operation = Operation.Session.CREATE,
         payload = SessionRequest
     )
