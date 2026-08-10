@@ -1,39 +1,45 @@
 from uuid import UUID
 from idenity_service import IdentityService
-from ..validators.endpoint_validators import WaltzResult
-from session_manager import SessionManager
+from ..validators.endpoint_validators import WaltzResult, LocalAuthPayload
+from ..validators.core_validator import IdentityPayload
+from session_manager import start, destroy, check_token, validate
 
 from uuid import uuid4
-from typing import Any
 
 
 class Orchestra:
-    def __init__(self, payload: Any):
+    def __init__(self):
         # NOTE: Any is for now. To be changed later
         self.id = uuid4()
-        self.payload = payload
 
         # NOTE: I could've initiated all sub function here itself but the ones not required would also be created and cause useless overhead
 
-    async def local_authenticate(self):
+    async def local_authenticate(self, payload: LocalAuthPayload):
         identity_service = IdentityService()
 
-        result = await identity_service.authenticate(self.payload)
+        result = await identity_service.authenticate(payload)
 
         if not result.value:
-            raise ValueError("result")
+            raise ValueError(result)
 
         # the user is authenticated at this point.
         # check if session exists and create one. the check would be done by _create itself.
-        self._create_session
+        token = await self._create_session(identity=payload.identity)
 
 
         return WaltzResult(
             status='success',
-            details={result.name : result.value}
+            details={result.name : result.value},
+            payload = {
+                "token": token
+            }
         )
 
-    async def _check_session(self):
+    async def _check_session(self, identity: IdentityPayload):
         # check if session exists
+        return await validate(identity=identity)
 
-    async def _create_session(self):
+    async def _create_session(self, identity: IdentityPayload) -> UUID:
+        if await validate(identity):
+            raise ValueError("User Already exists") 
+        return await start(identity)
