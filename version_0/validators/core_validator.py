@@ -29,7 +29,7 @@ class CadencePayload(BaseModel):
     code : str
 
 
-class CadenceTicket(CadencePayload):
+class CadenceTicket(BaseModel):
     '''
     A wrapper around CadencePayload.   
     Important for requesting tickets to cadence decorator
@@ -84,6 +84,10 @@ class IdentityPayload(IdentityServiceSchema):
         if self.email is None and self.uname is None:
             raise ValueError("Either email or uname must be provided.")
         return self
+
+class LocalAuthRequest(BaseModel):
+    identity: IdentityPayload
+    password: Password
 
 class OAuthAuthenticateResponse(IdentityServiceSchema):
     id: str
