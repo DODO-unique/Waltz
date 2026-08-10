@@ -68,26 +68,25 @@ class IdentityPayload(IdentityServiceSchema):
 class BaseRegisterPayload(IdentityServiceSchema):
     id: Uid = Field(default_factory=uuid4) # NOTE: sub comes here as string, local handles UUID
     name: str | None = None
-    idenitity: IdentityPayload
+    identity: IdentityPayload
     gender: Literal["male", "female", "non_binary", "prefer_not_to_say", "self_describe"] | None = None
     birthdate: datetime | None = None
     addr: Addresses | None = None
     picture: AnyHttpUrl | None = None
 
-class OAuth(BaseRegisterPayload):
+class OAuthRegistration(BaseRegisterPayload):
     profile: AnyHttpUrl | None = None
     website: AnyHttpUrl | None = None
     zoneinfo: str | None = None
     locale: str | None = None
     updated_at: datetime # compare for changes
 
-class WaltzAuth(BaseRegisterPayload):
+class LocalAuthRegistrationPayload(BaseRegisterPayload):
     password: Password
 
-
-class OAuthAuthenticateResponse(IdentityServiceSchema):
-    id: str
-    updated_at: datetime
+class OAuthAuthPayload(BaseModel):
+    sub: str #the sub is the only thing we need to compare
+    
 
 
 # ------------------ Serenity 
@@ -201,4 +200,4 @@ class GrandRegistry(Registry):
 class TicketType(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     type: OperationIntentions[Any, Any]
-    payload: OAuth | WaltzAuth | IdentityPayload | Uid | SessionRequest
+    payload: OAuthRegistration | OAuthAuthPayload | LocalAuthRegistrationPayload | IdentityPayload | Uid | SessionRequest
