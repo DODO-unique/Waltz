@@ -1,13 +1,13 @@
-from pydantic import BaseModel
-from typing import Literal, Any
-from validation_helper import UserName, Mail, Password
-from datetime import datetime
+from typing import Any, Literal
 
-class LocalAuthenticationPayload(BaseModel):
-    uname: UserName
-    email: Mail
+from core_validator import IdentityPayload
+from pydantic import BaseModel
+from validation_helper import Password
+
+
+class LocalAuthPayload(BaseModel):
+    identity: IdentityPayload
     password: Password
-    time: datetime
 
 class WaltzResult(BaseModel):
     status: Literal['success', 'failure']
