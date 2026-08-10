@@ -2,13 +2,14 @@ from dataclasses import dataclass
 from enum import Enum
 from types import UnionType
 from typing import Generic, TypeVar
+from uuid import UUID
 
 from ..validators.core_validator import (
     IdentityPayload,
-    OAuth,
+    LocalAuthRegistrationPayload,
+    OAuthRegistration,
     SessionRequest,
     Uid,
-    WaltzAuth,
 )
 
 
@@ -51,19 +52,19 @@ class User:
         payload = Uid
     )
 
-    GetUserOAuth: OperationIntentions[Uid, OAuth] = OperationIntentions(
+    GetUserOAuth: OperationIntentions[Uid, OAuthRegistration] = OperationIntentions(
         operation = Operation.User.GET_USER_OAUTH,
         payload = Uid
     )
 
-    RegisterUserOAuth: OperationIntentions[OAuth, None] = OperationIntentions(
+    RegisterUserOAuth: OperationIntentions[OAuthRegistration, None] = OperationIntentions(
         operation = Operation.User.REGISTER_USER_OAUTH,
-        payload = OAuth
+        payload = OAuthRegistration
     )
 
-    RegisterUserLocal: OperationIntentions[WaltzAuth, None] = OperationIntentions(
+    RegisterUserLocal: OperationIntentions[LocalAuthRegistrationPayload, None] = OperationIntentions(
         operation = Operation.User.REGISTER_USER_LOCAL,
-        payload = WaltzAuth
+        payload = LocalAuthRegistrationPayload
     )
 
 
