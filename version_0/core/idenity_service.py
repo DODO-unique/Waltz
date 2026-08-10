@@ -21,31 +21,32 @@ class IdentityService:
         pass
         
     async def register(self, payload: OAuthRegistration | LocalAuthRegistrationPayload) -> UUID:
-        if isinstance(payload, OAuthRegistration):
-            try: 
+        try: 
+            if isinstance(payload.id, str):
+                raise TypeError("How is this even a string")    
+            if isinstance(payload, OAuthRegistration):
                 await publish_ticket(
                     TicketType(
                     type=User.RegisterUserOAuth,
                     payload=payload
                     )
                 )
-            except Exception as e:
-                raise ValueError(e)
 
-            return payload.id
+                return payload.id
 
-        else:
-            try:
+            else:
                 await publish_ticket(
                     TicketType(
                         type=User.RegisterUserLocal,
                         payload=payload
                     )
                 )
-            except Exception as e:
-                raise ValueError(e)
+        
+                return payload.id
+        except Exception as e:
+            raise ValueError(e)
 
-            return payload.id
+
                 
 
     async def authenticate(self, payload: OAuthAuthPayload | LocalAuthPayload) -> Enum:
