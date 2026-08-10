@@ -2,15 +2,13 @@ from enums import AuthResultEnum, Enum, User
 from general import compare_password, get_id, publish_ticket
 
 from ..validators.core_validator import (
-    BaseRegisterPayload,
-    IdentityPayload,
-    OAuth,
+    UUID,
+    LocalAuthRegistrationPayload,
+    OAuthAuthPayload,
+    OAuthRegistration,
     TicketType,
-    WaltzAuth,
 )
-from ..validators.endpoint_validators import (
-    LocalAuthPayload
-)
+from ..validators.endpoint_validators import LocalAuthPayload
 
 
 class IdentityService:
@@ -22,65 +20,64 @@ class IdentityService:
     def __init__(self):
         pass
         
-    async def register(self, payload: OAuth | WaltzAuth) -> None:
-        if isinstance(payload, OAuth):
-            await publish_ticket(
-                TicketType(
-                type=User.RegisterUserOAuth,
-                payload=payload
+    async def register(self, payload: OAuthRegistration | LocalAuthRegistrationPayload) -> UUID:
+        if isinstance(payload, OAuthRegistration):
+            try: 
+                await publish_ticket(
+                    TicketType(
+                    type=User.RegisterUserOAuth,
+                    payload=payload
+                    )
                 )
-            )
+            except Exception as e:
+                raise ValueError(e)
+
+            return payload.id
 
         else:
-            await publish_ticket(
-                TicketType(
-                    type=User.RegisterUserLocal,
-                    payload=payload
+            try:
+                await publish_ticket(
+                    TicketType(
+                        type=User.RegisterUserLocal,
+                        payload=payload
+                    )
                 )
-            )
+            except Exception as e:
+                raise ValueError(e)
 
-        
-        raise TypeError("Type or OAuth enum incorrect")
+            return payload.id
+                
 
-    async def authenticate(self, payload: OAuth | LocalAuthPayload) -> Enum:
-
-        # check if payload is None (It can be None in certaincases so)
-        if payload is None:
-            raise ValueError("Payload is empty")
+    async def authenticate(self, payload: OAuthAuthPayload | LocalAuthPayload) -> Enum:
 
         # get a uid as we always fetch by uid
-        uid = await get_id(IdentityPayload(
-            uname=payload.uname,
-            email=payload.mail,
-        ))
-
-        # if uid is None then the user does not exist. So we return False as 'not authenticated'
-        if uid is None:
-            return AuthResultEnum.USER_NOT_FOUND
 
         # FOR OAuth the uid is always string
-        if isinstance(uid, str):
-            user: OAuth = await publish_ticket(
+        if isinstance(payload, OAuthAuthPayload):
+            user: OAuthAuthPayload = await publish_ticket(
                 TicketType(
                     type=User.GetUserOAuth,
-                    payload=uid
+                    payload=payload.sub
                 )
             )
 
-            if isinstance(payload, OAuth):
-                if user.updated_at == payload.updated_at:
-                    return AuthResultEnum.SUCCESS
-                else:
-                    # TODO: update_user is not set yet, raise a warning flag for it
-                    await self.update_user()
-                    return AuthResultEnum.SUCCESS
+            if user.updated_at == payload.updated_at:
+                return AuthResultEnum.SUCCESS
+            else:
+                # TODO: update_user is not set yet, raise a warning flag for it
+                await self.update_user()
+                return AuthResultEnum.SUCCESS
 
 
         # if either uid and id aren't string then OAuth is not involved
         else:
-            # checks if payload has password field
-            if not isinstance(payload, WaltzAuth):
-                raise TypeError("INTERNAL: Payload is not WaltzAuth and is not OAuth (or uid is not str)")
+            uid = await get_id(payload.identity)
+
+            # NOTE: wondering if I can directly use the sub from oauth
+
+            # if uid is None then the user does not exist. So we return False as 'not authenticated'
+            if uid is None:
+                return AuthResultEnum.USER_NOT_FOUND
             # get bassword in string
             password_body: str = await publish_ticket(
                     TicketType(
@@ -96,8 +93,6 @@ class IdentityService:
 
             # return the predicate
             return AuthResultEnum.SUCCESS if is_authenticate else AuthResultEnum.NOT_AUTHENTIC
-
-        return AuthResultEnum.MISC_NOT_AUTH
 
     async def update_user(self) -> None:
         pass
