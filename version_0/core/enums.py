@@ -26,6 +26,7 @@ class Operation:
         CHECK = 'check'
         DELETE = 'delete'
         DELETE_ALL = 'delete_all'
+        GET_TOKEN = 'get_token' 
 
     class OneTimePassword(str, Enum):
         STORE = 'store'
@@ -86,6 +87,11 @@ class Session:
 
     DeleteAll: OperationIntentions[SessionRequest, None] = OperationIntentions(
         operation = Operation.Session.DELETE_ALL,
+        payload = SessionRequest
+    )
+
+    GetToken: OperationIntentions[SessionRequest, UUID] = OperationIntentions(
+        operation = Operation.Session.GET_TOKEN,
         payload = SessionRequest
     )
 
