@@ -3,7 +3,13 @@ from enum import Enum
 from types import UnionType
 from typing import Generic, TypeVar
 
-from ..validators.core_validator import IdentityPayload, OAuth, SessionRequest, Uid, WaltzAuth  
+from ..validators.core_validator import (
+    IdentityPayload,
+    OAuth,
+    SessionRequest,
+    Uid,
+    WaltzAuth,
+)
 
 
 class Operation:
@@ -104,3 +110,9 @@ class FeatEnum(str, Enum):
     DATABASE = 'database'
     CADENCE = 'cadence'
     SERENITY = 'serenity'
+
+class AuthResultEnum(Enum):
+    SUCCESS = 0
+    NOT_AUTHENTIC = 1
+    USER_NOT_FOUND = 2
+    MISC_NOT_AUTH = 3
