@@ -47,27 +47,6 @@ class CadenceTicket(BaseModel):
 class IdentityServiceSchema(BaseModel):
     pass
 
-class BaseRegisterPayload(IdentityServiceSchema):
-    id: Uid = Field(default_factory=uuid4) # NOTE: sub comes here as string, local handles UUID
-    name: str | None = None
-    uname: str | None = None
-    mail: Mail | None = None
-    gender: Literal["male", "female", "non_binary", "prefer_not_to_say", "self_describe"] | None = None
-    birthdate: datetime | None = None
-    addr: Addresses | None = None
-    picture: AnyHttpUrl | None = None
-
-class OAuth(BaseRegisterPayload):
-    profile: AnyHttpUrl | None = None
-    website: AnyHttpUrl | None = None
-    zoneinfo: str | None = None
-    locale: str | None = None
-    updated_at: datetime # compare for changes
-
-class WaltzAuth(BaseRegisterPayload):
-    password: Password
-
-
 class IdentityPayload(IdentityServiceSchema):
     '''
     Schema of IdentityPayload:
@@ -86,9 +65,25 @@ class IdentityPayload(IdentityServiceSchema):
             raise ValueError("Either email or uname must be provided.")
         return self
 
-class LocalAuthRequest(BaseModel):
-    identity: IdentityPayload
+class BaseRegisterPayload(IdentityServiceSchema):
+    id: Uid = Field(default_factory=uuid4) # NOTE: sub comes here as string, local handles UUID
+    name: str | None = None
+    idenitity: IdentityPayload
+    gender: Literal["male", "female", "non_binary", "prefer_not_to_say", "self_describe"] | None = None
+    birthdate: datetime | None = None
+    addr: Addresses | None = None
+    picture: AnyHttpUrl | None = None
+
+class OAuth(BaseRegisterPayload):
+    profile: AnyHttpUrl | None = None
+    website: AnyHttpUrl | None = None
+    zoneinfo: str | None = None
+    locale: str | None = None
+    updated_at: datetime # compare for changes
+
+class WaltzAuth(BaseRegisterPayload):
     password: Password
+
 
 class OAuthAuthenticateResponse(IdentityServiceSchema):
     id: str
