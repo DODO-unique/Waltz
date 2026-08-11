@@ -228,3 +228,8 @@ class JWKSchema(BaseModel):
     n: str
     e: str  
     model_config = ConfigDict(extra="allow")
+
+class JWKVerificationRequest(BaseModel):
+    provider: ProviderName
+    id_token: str
+    client_id: str
