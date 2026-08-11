@@ -225,6 +225,7 @@ class JWKSchema(BaseModel):
     kid: str
     kty: str
     alg: str
+    iss: str
     n: str
     e: str  
     model_config = ConfigDict(extra="allow")
