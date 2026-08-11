@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID, uuid4
 
-from pydantic import AnyHttpUrl, BaseModel, Field, model_validator
+from pydantic import AnyHttpUrl, BaseModel, Field, model_validator, ConfigDict
 from validation_helper import Addresses, Mail, Password, ProviderName, Uid, UserName
 
 from ..core.enums import OperationIntentions
@@ -218,3 +218,13 @@ class TicketType(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     type: OperationIntentions[Any, Any]
     payload: OAuthRegistration | OAuthAuthPayload | LocalAuthRegistrationPayload | IdentityPayload | Uid | SessionRequest
+
+# ------------------- JWT
+
+class JWKSchema(BaseModel):
+    kid: str
+    kty: str
+    alg: str
+    n: str
+    e: str  
+    model_config = ConfigDict(extra="allow")
