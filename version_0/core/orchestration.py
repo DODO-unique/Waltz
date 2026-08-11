@@ -1,7 +1,7 @@
 from uuid import UUID
 from idenity_service import IdentityService
 from ..validators.endpoint_validators import WaltzResult, LocalAuthPayload
-from ..validators.core_validator import IdentityPayload
+from ..validators.core_validator import IdentityPayload, LocalAuthRegistrationPayload
 from session_manager import start, destroy, check_token, validate
 
 from uuid import uuid4
@@ -13,6 +13,19 @@ class Orchestra:
         self.id = uuid4()
 
         # NOTE: I could've initiated all sub function here itself but the ones not required would also be created and cause useless overhead
+
+    async def local_registration(self, payload: LocalAuthRegistrationPayload):
+        identity_service = IdentityService()
+
+        token = await identity_service.register(payload)
+
+        # .register() catches all errors itself
+        return WaltzResult(
+            status="success",
+            payload={
+                "token" : token
+            }
+        )
 
     async def local_authenticate(self, payload: LocalAuthPayload):
         identity_service = IdentityService()
@@ -29,7 +42,7 @@ class Orchestra:
 
         return WaltzResult(
             status='success',
-            details={result.name : result.value},
+            details={result.name : result.value}, # A: This feels unnecessary
             payload = {
                 "token": token
             }
@@ -43,3 +56,4 @@ class Orchestra:
         if await validate(identity):
             raise ValueError("User Already exists") 
         return await start(identity)
+
