@@ -7,6 +7,7 @@ from ..validators.core_validator import (
     OAuthAuthPayload,
     OAuthRegistration,
     TicketType,
+    Uid,
 )
 from ..validators.endpoint_validators import LocalAuthPayload
 
@@ -20,10 +21,8 @@ class IdentityService:
     def __init__(self):
         pass
         
-    async def register(self, payload: OAuthRegistration | LocalAuthRegistrationPayload) -> UUID:
+    async def register(self, payload: OAuthRegistration | LocalAuthRegistrationPayload) -> Uid:
         try: 
-            if isinstance(payload.id, str):
-                raise TypeError("How is this even a string")    
             if isinstance(payload, OAuthRegistration):
                 await publish_ticket(
                     TicketType(
@@ -45,9 +44,6 @@ class IdentityService:
                 return payload.id
         except Exception as e:
             raise ValueError(e)
-
-
-                
 
     async def authenticate(self, payload: OAuthAuthPayload | LocalAuthPayload) -> Enum:
 
