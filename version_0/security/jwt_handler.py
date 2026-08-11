@@ -1,11 +1,11 @@
-import jwt 
-from jwt import PyJWK
-import httpx
-from pydantic import model_validator
-from ..validators.core_validator import JWKSchema, ProviderName, JWKVerificationRequest
-from dataclasses import dataclass, field
 import time
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
+from dataclasses import dataclass
+
+import httpx
+import jwt
+from jwt import PyJWK
+
+from ..validators.core_validator import JWKSchema, JWKVerificationRequest, ProviderName
 
 
 @dataclass
@@ -47,7 +47,7 @@ async def _get_key(provider: ProviderName):
                 jwk_cache[provider].add_jwk(kid=key.kid, key=key)
                 return key
 
-async def verify_signature(payload: JWKVerificationRequest):
+async def process_id_token(payload: JWKVerificationRequest):
     jwkschema = await _get_key(payload.provider)
     if jwkschema is None:
         raise ValueError("NO key returned")
@@ -59,5 +59,6 @@ async def verify_signature(payload: JWKVerificationRequest):
         issuer=jwkschema.iss,
         algorithms=jwkschema.alg
     )
+
     return verified_claims
             
