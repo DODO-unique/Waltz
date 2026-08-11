@@ -1,7 +1,8 @@
 from uuid import UUID
 from idenity_service import IdentityService
+from serenity import Serenity
 from ..validators.endpoint_validators import WaltzResult, LocalAuthPayload
-from ..validators.core_validator import IdentityPayload, LocalAuthRegistrationPayload
+from ..validators.core_validator import IdentityPayload, LocalAuthRegistrationPayload, ProviderName
 from session_manager import start, destroy, check_token, validate
 
 from uuid import uuid4
@@ -47,6 +48,10 @@ class Orchestra:
                 "token": token
             }
         )
+
+    async def authorization_request(self, provider: ProviderName):
+        serenity = Serenity()
+        return serenity.request_authorization(provider)
 
     async def _check_session(self, identity: IdentityPayload):
         # check if session exists
