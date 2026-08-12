@@ -1,7 +1,7 @@
 from enums import AuthResultEnum, Enum, User
 from general import get_id, publish_ticket
-from ..security.hashing import compare_password
 
+from ..security.hashing import compare_password
 from ..validators.core_validator import (
     LocalAuthRegistrationPayload,
     OAuthAuthPayload,
