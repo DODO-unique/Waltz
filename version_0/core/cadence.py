@@ -2,6 +2,7 @@ from random import randint
 from uuid import uuid4
 
 from enums import OneTimePassword
+from security.hashing import sha_hash
 
 from ..core.general import dispatch_ticket, get_id, publish_ticket
 from ..validators.core_validator import (
@@ -11,7 +12,6 @@ from ..validators.core_validator import (
     Mail,
     TicketType,
 )
-from security.hashing import sha_hash
 
 
 class Cadence:
