@@ -23,7 +23,8 @@ class IdentityService:
         
     async def register(self, payload: OAuthRegistration | LocalAuthRegistrationPayload) -> Uid:
         '''
-        This method catches errors itself and returns a Uid, no need to setup relevant measures in implementation
+        This method catches errors itself and returns a Uid, no need to setup relevant measures in implementation.
+        Though I wish it didn't do that. We can just pass a 'None' and let the receiver filter between uid and None
         '''
         try: 
             if isinstance(payload, OAuthRegistration):
@@ -54,12 +55,15 @@ class IdentityService:
 
         # FOR OAuth the uid is always string
         if isinstance(payload, OAuthAuthPayload):
-            user: OAuthAuthPayload = await publish_ticket(
+            user: OAuthRegistration | None = await publish_ticket(
                 TicketType(
                     type=User.GetUserOAuth,
                     payload=payload.sub
                 )
             )
+
+            if user is None:
+                return AuthResultEnum.USER_NOT_FOUND
 
             if user.updated_at == payload.updated_at:
                 return AuthResultEnum.SUCCESS
