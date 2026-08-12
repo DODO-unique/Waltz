@@ -3,6 +3,7 @@ from typing import TypeVar, get_args
 
 from ..core.enums import OperationIntentions
 from ..validators.core_validator import (
+    AnyHttpUrl,
     CadencePayload,
     DatabaseRegistry,
     OAuthCredentials,
@@ -20,7 +21,7 @@ class Listeners:
         self.registry: Registry
 
         # NOTE: URI only for OAuth
-        self.REDIRECT_URI = None if base_uri is None else base_uri.rstrip("/") + "/auth/oauth/initiate"
+        self.REDIRECT_URI = None if base_uri is None else base_uri.rstrip("/") + "/auth/oauth/authResponse"
     
     def decorator(self, spec: OperationIntentions[P, R]) -> Callable[[Callable[[P], Awaitable[R]]],Callable[[P], Awaitable[R]],]:
         
@@ -62,6 +63,6 @@ class Listeners:
             raise ValueError("Provide a redirect URI")
         if provider_name not in get_args(ProviderName):
             raise ValueError("No such provider name")
-        package = creds.with_provider_defaults(provider_name, self.REDIRECT_URI)
+        package = creds.with_provider_defaults(provider_name, AnyHttpUrl(self.REDIRECT_URI))
 
         self.registry.serenity.add(package)
