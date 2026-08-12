@@ -53,7 +53,7 @@ class User:
         payload = Uid
     )
 
-    GetUserOAuth: OperationIntentions[Uid, OAuthRegistration] = OperationIntentions(
+    GetUserOAuth: OperationIntentions[Uid, OAuthRegistration | None] = OperationIntentions(
         operation = Operation.User.GET_USER_OAUTH,
         payload = Uid
     )
@@ -123,3 +123,7 @@ class AuthResultEnum(Enum):
     NOT_AUTHENTIC = 1
     USER_NOT_FOUND = 2
     MISC_NOT_AUTH = 3
+
+class ProviderCategory(Enum):
+    OIDC = 0
+    OAUTH = 1
