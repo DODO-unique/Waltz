@@ -13,6 +13,7 @@ from ..validators.core_validator import (
     ProviderName,
     TokenRequest,
     TokenResponse,
+    TradeResponse,
 )
 
 
@@ -144,7 +145,13 @@ class Serenity:
 
                     response.raise_for_status()
 
-                    return TokenResponse.model_validate(response.json())
+                    token_response = TokenResponse.model_validate(response.json())
+                    return TradeResponse(
+                        provider=payload.provider,
+                        client_id=creds.client_id,
+                        token_response=token_response
+                    )
+                                        
 
                 except httpx.HTTPStatusError as exc:
                     raise ValueError(f"Error status {exc.response.status_code} returned by the OAuth provider ({exc.request.url}) during server-to-server trade")
