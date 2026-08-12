@@ -2,6 +2,7 @@ import secrets
 from uuid import uuid4
 
 import httpx
+from enums import ProviderCategory
 from general import bus
 
 from ..validators.core_validator import (
@@ -69,6 +70,17 @@ class Serenity:
             "custom": "USER_VARIABLE"
         }
 
+        self.POVIDER_CATEGORY: dict[str, list[ProviderName]] = {
+            "OAuth 2.0" : ["discord", "github"],
+            "OIDC" : ["google", "microsoft", "linkedin"]
+        }
+
+    def get_provider_category(self, provider: ProviderName):
+        if provider in self.POVIDER_CATEGORY["OIDC"]:
+            return ProviderCategory.OIDC
+        else:
+            return ProviderCategory.OAUTH
+
     def _fetch_creds(self, provider_name: ProviderName) -> Credentials:
         return bus.credentials(CredentialsTicket(
             id=uuid4(),
@@ -79,7 +91,7 @@ class Serenity:
 
         return f"{self.AUTHORIZATION_BASE_URLS[provider_name]}?response_type={requestBody.response_type}&client_id={requestBody.client_id}&redirect_uri={requestBody.redirect_uri}&scope={requestBody.scope}&state={requestBody.state}"
 
-    def request_authorization(self, provider_name: ProviderName):
+    def request_authorization(self, provider_name: ProviderName, category: ProviderCategory):
         '''
         Deals with authorization endpoints.
 
