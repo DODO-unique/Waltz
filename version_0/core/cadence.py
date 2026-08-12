@@ -1,5 +1,3 @@
-
-import hashlib
 from random import randint
 from uuid import uuid4
 
@@ -13,6 +11,7 @@ from ..validators.core_validator import (
     Mail,
     TicketType,
 )
+from security.hashing import sha_hash
 
 
 class Cadence:
@@ -49,9 +48,9 @@ class Cadence:
 
         Just like tokens, otp also has an expiry and if now is greater than expiry you kill the token.
         THis is a persistence decision.
-        '''
+        ''' 
         code = randint(1000, 9999)
-        digest = self.hash_it(str(code))
+        digest = sha_hash(str(code))
 
         # pass the digest to be stored in the DB
         await publish_ticket(
@@ -93,7 +92,7 @@ class Cadence:
             )
         )
 
-        given_otp_digest = self.hash_it(payload.code)
+        given_otp_digest = sha_hash(payload.code)
 
         if given_otp_digest == result:
             # it is correct, send a correct flag back and delete the otp
