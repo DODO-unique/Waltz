@@ -6,6 +6,7 @@ from enums import ProviderCategory
 from general import bus
 
 from ..validators.core_validator import (
+    AnyHttpUrl,
     AuthorizationRequest,
     AuthorizationResponse,
     AuthorizationSuccess,
@@ -16,6 +17,7 @@ from ..validators.core_validator import (
     TokenResponse,
     TradeResponse,
 )
+from ..constants.providers import DiscordSchema, GitHubSchema
 
 
 class InMemoryStateStore:
@@ -91,7 +93,7 @@ class Serenity:
 
         return f"{self.AUTHORIZATION_BASE_URLS[provider_name]}?response_type={requestBody.response_type}&client_id={requestBody.client_id}&redirect_uri={requestBody.redirect_uri}&scope={requestBody.scope}&state={requestBody.state}"
 
-    def request_authorization(self, provider_name: ProviderName, category: ProviderCategory):
+    def get_request_url(self, provider_name: ProviderName, category: ProviderCategory) -> AnyHttpUrl:
         '''
         Deals with authorization endpoints.
 
@@ -110,18 +112,27 @@ class Serenity:
             else ["read:user", "user:email"]
         )
 
-        return self._compose_url(
+        if category.value:
+            scope = ["openid", "email", "profile"] 
+        else:
+            if provider_name == "discord":
+                scope = DiscordSchema.scope
+            elif provider_name == "github":
+                scope = GitHubSchema.scope
+            
+
+        return AnyHttpUrl(self._compose_url(
             provider_name, 
             AuthorizationRequest(
                 client_id=creds.client_id,
                 redirect_uri=creds.redirect_uri,
                 scope=" ".join(scope),
                 state=state,
-            ))
+            )))
 
 
 
-    async def trade(self, payload: AuthorizationResponse):
+    async def trade(self, payload: AuthorizationResponse) -> TradeResponse:
         '''
         This AuthorizationResponse comes resolved into a Pydantic object from the endpoint itself: FastAPI's pydantic DI takes the type hint and resolves it with TypeAdapter internally.
 
