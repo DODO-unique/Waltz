@@ -20,5 +20,16 @@ def routes(prefix: str):
     async def register(payload: LocalAuthRegistrationPayload):
         return await Orchestra().local_registration(payload)
 
-    @waltz('/oauth')
+    @waltz.get('/oauth/init')
+    def initiate_oauth(payload: ProviderName):
+        '''
+        Returns authorization request
+        '''
+        return Orchestra().oauth_authorization_request(payload)
+    
+    @waltz.post('/oauth/authResponse')
+    async def auth_code(payload: AuthorizationResponse):
+        return await Orchestra().initiate_trade(payload)
+
     @waltz('/verify/email')
+
