@@ -1,8 +1,8 @@
 from enums import AuthResultEnum, Enum, User
-from general import compare_password, get_id, publish_ticket
+from general import get_id, publish_ticket
+from ..security.hashing import compare_password
 
 from ..validators.core_validator import (
-    UUID,
     LocalAuthRegistrationPayload,
     OAuthAuthPayload,
     OAuthRegistration,
@@ -22,6 +22,9 @@ class IdentityService:
         pass
         
     async def register(self, payload: OAuthRegistration | LocalAuthRegistrationPayload) -> Uid:
+        '''
+        This method catches errors itself and returns a Uid, no need to setup relevant measures in implementation
+        '''
         try: 
             if isinstance(payload, OAuthRegistration):
                 await publish_ticket(
