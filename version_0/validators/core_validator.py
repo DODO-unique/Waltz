@@ -119,6 +119,11 @@ class TokenResponse(OAuthSchema):
     scope: str | None = None
     id_token: str | None = None
 
+class TradeResponse(OAuthSchema):
+    provider: ProviderName
+    client_id: str
+    token_response: TokenResponse
+
 class TokenRequest(OAuthSchema):
     grant_type: Literal["authorization_code"] = "authorization_code"
     code: str
