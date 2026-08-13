@@ -49,7 +49,7 @@ class IdentityService:
                 )
         
                 return payload.id
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             raise ValueError(e)
 
     async def authenticate(self, payload: OAuthAuthPayload | LocalAuthPayload) -> Enum:
