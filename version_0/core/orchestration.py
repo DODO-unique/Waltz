@@ -20,13 +20,13 @@ from ..validators.core_validator import (
     ResourceRequestPayload,
     ResourceResponsePayload,
     Uid,
-    UserName
+    UserName,
 )
 from ..validators.endpoint_validators import (
     LocalAuthPayload,
     LogOutPayload,
+    ValidationPayload,
     WaltzResult,
-    ValidationPayload
 )
 
 
