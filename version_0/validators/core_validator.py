@@ -9,6 +9,7 @@ from pydantic import AnyHttpUrl, BaseModel, Field, model_validator, ConfigDict
 from validation_helper import Addresses, Mail, Password, ProviderName, Uid, UserName
 
 from ..core.enums import OperationIntentions
+from ..constants.providers import OAuthProviders, GitHubClaimSchema, DiscordClaimSchema
 
 # ---------------- Cadence Schemas
 
@@ -170,6 +171,14 @@ class CredentialsTicket(BaseModel):
     '''
     id: UUID = Field(default_factory=uuid4)
     provider: ProviderName
+
+class ResourceRequestPayload(BaseModel):
+    provider: ProviderName
+    access_token: str
+
+class ResourceResponsePayload(BaseModel):
+    provider: OAuthProviders
+    claim_schema: GitHubClaimSchema | DiscordClaimSchema
 
 # ------------------- Session
 
