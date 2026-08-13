@@ -2,6 +2,27 @@ from dataclasses import dataclass
 from enum import Enum
 from pydantic import AnyHttpUrl, BaseModel, EmailStr, HttpUrl
 
+# -----------------------------------------------------------------
+# 0. Claim Schemas
+# -----------------------------------------------------------------
+
+class DiscordClaimSchema(BaseModel):
+    id: str
+    username: str
+    discriminator: str
+    avatar: str | None = None
+    email: EmailStr | None = None
+    verified: bool | None = False
+
+
+class GitHubClaimSchema(BaseModel):
+    id: int
+    login: str
+    name: str | None = None
+    email: EmailStr | None = None
+    avatar_url: HttpUrl | None = None
+
+
 # ------------------------------------------------------------------
 # 1. Base Dataclass Definition
 # ------------------------------------------------------------------
@@ -12,22 +33,15 @@ class BaseOAuthProvider:
     token_api_url: AnyHttpUrl
     claim_api_url: AnyHttpUrl
     scope: list[str]
-    claim: type[BaseModel]  # Pydantic BaseModel class for validation
+    claim: type[GitHubClaimSchema | DiscordClaimSchema] # Pydantic BaseModel class for validation
     request_sugar: dict[str, str] | None = None
 
 
 # ------------------------------------------------------------------
-# 2. Discord Schemas and Instance
+# 2. Discord Instance
 # ------------------------------------------------------------------
 
 
-class DiscordClaimSchema(BaseModel):
-    id: str
-    username: str
-    discriminator: str
-    avatar: str | None = None
-    email: EmailStr | None = None
-    verified: bool | None = False
 
 
 DiscordSchema = BaseOAuthProvider(
@@ -39,16 +53,9 @@ DiscordSchema = BaseOAuthProvider(
 
 
 # ------------------------------------------------------------------
-# 3. GitHub Schemas and Instance
+# 3. GitHub Instance
 # ------------------------------------------------------------------
 
-
-class GitHubClaimSchema(BaseModel):
-    id: int
-    login: str
-    name: str | None = None
-    email: EmailStr | None = None
-    avatar_url: HttpUrl | None = None
 
 
 GitHubSchema = BaseOAuthProvider(
