@@ -5,6 +5,11 @@ import httpx
 from enums import ProviderCategory
 from general import bus
 
+from ..constants.providers import (
+    DiscordSchema,
+    GitHubSchema,
+    OAuthProviders,
+)
 from ..validators.core_validator import (
     AnyHttpUrl,
     AuthorizationRequest,
@@ -13,11 +18,12 @@ from ..validators.core_validator import (
     Credentials,
     CredentialsTicket,
     ProviderName,
+    ResourceRequestPayload,
+    ResourceResponsePayload,
     TokenRequest,
     TokenResponse,
     TradeResponse,
 )
-from ..constants.providers import DiscordSchema, GitHubSchema
 
 
 class InMemoryStateStore:
@@ -184,3 +190,32 @@ class Serenity:
 
         else:
             raise TypeError(f"Error occuered: {payload.error}")
+
+    
+    async def resource_request(self, payload: ResourceRequestPayload):
+        provider = OAuthProviders.NONE
+        claims = None
+        async with httpx.AsyncClient() as client:
+            if payload.provider == "github":
+                assert GitHubSchema.request_sugar is not None
+                accept = GitHubSchema.request_sugar.get("accept")
+                response = await client.get(f"{GitHubSchema.claim_api_url}", headers={
+                    "Authorization" : f"Bearer {payload.access_token}",
+                    "Accept" : f"{accept}"
+                })
+                provider = OAuthProviders.GITHUB
+                claims = GitHubSchema.claim.model_validate(response.json())
+
+            elif payload.provider == "discord":
+                response = await client.get(f"{DiscordSchema.claim_api_url}", headers={
+                    "Authorization" : f"Bearer {payload.access_token}"
+                })
+                provider = OAuthProviders.DISORD
+                claims = DiscordSchema.claim.model_validate(response.json())
+            else:
+                raise ValueError("Provider not supported")
+
+            return ResourceResponsePayload(
+                provider=provider,
+                claim_schema=claims
+            )
