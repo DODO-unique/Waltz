@@ -7,10 +7,10 @@ from uuid import UUID
 from ..validators.core_validator import (
     IdentityPayload,
     LocalAuthRegistrationPayload,
+    Mail,
     OAuthRegistration,
     SessionRequest,
     Uid,
-    Mail
 )
 
 
@@ -19,7 +19,7 @@ class Operation:
         GET_ID = 'get_id'
         GET_USER_LOCAL = 'get_user_local'
         GET_USER_OAUTH = 'get_user_oauth'
-        GET_USER_MAIL = 'get_user_mail'
+        GET_MAIL = 'get_mail'
         REGISTER_USER_OAUTH = 'register_user'
         REGISTER_USER_LOCAL = 'register_user_local'
 
@@ -60,8 +60,8 @@ class User:
         payload = Uid
     )
 
-    GetUserMail: OperationIntentions[Uid, Mail | None] = OperationIntentions(
-        operation = Operation.User.GET_USER_MAIL,
+    GetMail: OperationIntentions[Uid, Mail | None] = OperationIntentions(
+        operation = Operation.User.GET_MAIL,
         payload = Uid
     )
 
