@@ -48,7 +48,7 @@ class User:
         payload = IdentityPayload
     )
 
-    GetUserLocal: OperationIntentions[Uid, str] = OperationIntentions(
+    GetUserPassLocal: OperationIntentions[Uid, str] = OperationIntentions(
         operation = Operation.User.GET_USER_LOCAL,
         payload = Uid
     )
