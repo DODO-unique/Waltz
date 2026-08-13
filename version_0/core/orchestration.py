@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID, uuid4
 
+from cadence import Cadence
 from idenity_service import IdentityService
 from serenity import Serenity
 from session_manager import destroy, destroy_all, start, validate
@@ -19,11 +20,13 @@ from ..validators.core_validator import (
     ResourceRequestPayload,
     ResourceResponsePayload,
     Uid,
+    UserName
 )
 from ..validators.endpoint_validators import (
     LocalAuthPayload,
     LogOutPayload,
     WaltzResult,
+    ValidationPayload
 )
 
 
@@ -239,4 +242,32 @@ class Orchestra:
                 status="success"
             )
         await destroy(payload.token)
-        
+
+    async def initiate_email_validation(self, identity: IdentityPayload):
+        mail = identity.email
+        if mail is None:
+            assert identity.uname is not None # IdentityPayload enforces either one to be not None locally
+            mail = await self._get_mail(identity.uname)
+        caddy = Cadence(email=mail)
+
+        await caddy.issue()
+
+    async def email_validation(self, payload: ValidationPayload):
+        mail = payload.identity.email
+        if mail is None:
+            assert payload.identity.uname is not None # IdentityPayload enforces either one to be not None locally            
+            mail = await self._get_mail(payload.identity.uname)
+        caddy = Cadence(email=mail)
+
+        predicate = await caddy.validate(payload.code)
+
+        return WaltzResult(
+            status="success",
+            payload={
+                "predicate" : predicate
+            }
+        )
+
+    async def _get_mail(self, uname: UserName):
+        identity = IdentityService()
+        return await identity.get_email_by_uname(uname)
