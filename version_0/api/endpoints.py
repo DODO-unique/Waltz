@@ -1,7 +1,20 @@
 from fastapi import APIRouter
-from ..validators.endpoint_validators import LocalAuthPayload, WaltzResult, RequestByIdentity, RequestByMail
-from ..validators.core_validator import LocalAuthRegistrationPayload, ProviderName, AuthorizationResponse, IdentityPayload
+
 from ..core.orchestration import Orchestra
+from ..validators.core_validator import (
+    AuthorizationResponse,
+    IdentityPayload,
+    LocalAuthRegistrationPayload,
+    ProviderName,
+)
+from ..validators.endpoint_validators import (
+    LocalAuthPayload,
+    RequestByIdentity,
+    RequestByMail,
+    ValidationPayload,
+    WaltzResult,
+)
+
 
 def routes(prefix: str):
     waltz = APIRouter(prefix=prefix)
