@@ -10,7 +10,7 @@ from ..validators.core_validator import (
     CadenceTicket,
     IdentityPayload,
     Mail,
-    TicketType
+    TicketType,
 )
 
 
@@ -69,7 +69,7 @@ class Cadence:
             ) 
 
 
-    async def verify(self, payload: CadencePayload):
+    async def validate(self, code: str) -> bool:
         '''
         1. Fetch stored OTP record.
         2. Check expiry.
@@ -91,7 +91,7 @@ class Cadence:
             )
         )
 
-        given_otp_digest = sha_hash(payload.code)
+        given_otp_digest = sha_hash(code)
 
         if given_otp_digest == result:
             # it is correct, send a correct flag back and delete the otp
