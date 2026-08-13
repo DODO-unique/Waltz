@@ -1,13 +1,16 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from pydantic import AnyHttpUrl, BaseModel, EmailStr, HttpUrl
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, HttpUrl
 
 # -----------------------------------------------------------------
 # 0. Claim Schemas
 # -----------------------------------------------------------------
 
-class DiscordClaimSchema(BaseModel):
+class ClaimSchema(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+class DiscordClaimSchema(ClaimSchema):
     id: str
     username: str
     discriminator: str
@@ -16,7 +19,7 @@ class DiscordClaimSchema(BaseModel):
     verified: bool | None = False
 
 
-class GitHubClaimSchema(BaseModel):
+class GitHubClaimSchema(ClaimSchema):
     id: int
     login: str
     name: str | None = None
