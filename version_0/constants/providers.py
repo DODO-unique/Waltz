@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 
-from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, HttpUrl
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, field_validator
 
 # -----------------------------------------------------------------
 # 0. Claim Schemas
@@ -24,12 +24,17 @@ class DiscordClaimSchema(ClaimSchema):
 
 
 class GitHubClaimSchema(ClaimSchema):
-    id: int
+    id: str
     login: str
     name: str | None = None
     email: EmailStr | None = None
     avatar_url: HttpUrl | None = None
     updated_at: datetime
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def convert_id_to_string(cls, v:int | str) -> str:
+        return str(v)
 
 
 # ------------------------------------------------------------------
