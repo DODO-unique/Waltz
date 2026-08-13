@@ -13,8 +13,12 @@ from ..validators.core_validator import (
     JWKVerificationRequest,
     ProviderName,
     Uid,
-    AuthorizationResponse
+    AuthorizationResponse,
+    ResourceRequestPayload,
+    ResourceResponsePayload,
+    OAuthAuthPayload
 )
+from ..constants.providers import GitHubClaimSchema, DiscordClaimSchema
 from datetime import timezone
 from session_manager import start, destroy, check_token, validate
 
@@ -71,40 +75,72 @@ class Orchestra:
         serenity = Serenity()
         trade_response = await serenity.trade(payload)
         if trade_response.token_response.id_token is None:
-            # this is the oauth 2.0 category
-            pass
+            # this is the oauth 2.0 access token category
+            result = await serenity.resource_request(ResourceRequestPayload(
+                provider=trade_response.provider,
+                access_token=trade_response.token_response.access_token
+            ))  
+            token = await self._oauth_registration(result)
+
+            return WaltzResult(
+                status="success",
+                payload={
+                    "token": token
+                }
+            )
+            
         else:
             jwk_request = JWKVerificationRequest(
                 provider=payload.provider,
                 id_token=trade_response.token_response.id_token,
                 client_id=trade_response.client_id
             )
-            return await self._oidc_oauth_registration(jwk_request)
+            token = await self._oidc_oauth_registration(jwk_request)
 
-    async def _oidc_oauth_registration(self, payload: JWKVerificationRequest):
-        verified_claims = await process_id_token(payload)
-        oauth_payload = self._oauth_registration_from_verified_claims(verified_claims)
+            return WaltzResult(
+                status="success",
+                payload={
+                    "token": token
+                }
+            )
 
-        identity_service = IdentityService()
-        uid = await identity_service.register(oauth_payload)
-        token = await self._create_session(uid=uid)
 
-        return WaltzResult(
-            status="success",
-            payload={"token": token}
-        )
+    async def _oauth_registration(self, payload: ResourceResponsePayload) -> UUID:
+        identity = IdentityService()
+        if payload.provider.value == 1 and isinstance(payload.claim_schema, GitHubClaimSchema): #github
+            claims = payload.claim_schema
+            # check if user exists
+            subject = claims.id
+            updated_at = claims.updated_at
+            result = await identity.authenticate(OAuthAuthPayload(
+                sub=subject,
+                updated_at=updated_at
+            ))
 
-    def _parse_datetime(self, value: Any) -> datetime | None:
-        if value is None:
-            return None
-        if isinstance(value, datetime):
-            return value
-        if isinstance(value, (int, float)):
-            return datetime.fromtimestamp(value, tz=timezone.utc)
-        if isinstance(value, str):
-            # OIDC claims don't pass iso format strings but still.
-            return datetime.fromisoformat(value)
-        raise ValueError("Cannot parse datetime from OIDC claim")
+            if result.value:
+                token = await self._create_session(uid=subject)
+                return token
+            
+
+            registeration_data = OAuthRegistration(
+                id=claims.id,
+                name=claims.name,
+                identity=IdentityPayload(
+                    uname=claims.login,
+                    email= claims.email
+                ),
+                picture=claims.avatar_url,
+                updated_at=claims.updated_at
+            )
+
+            uid = await identity.register(registeration_data)
+            token = await self._create_session(uid=uid)
+            return token
+
+        if payload.provider.value == 2 and isinstance(payload.claim_schema, DiscordClaimSchema):
+            claims
+
+
 
     def _oauth_registration_from_verified_claims(self, verified_claims: dict[str, Any]) -> OAuthRegistration:
         # get here is dramatically better because it returns None if the key is not found.
@@ -138,9 +174,45 @@ class Orchestra:
             updated_at=updated_at,
         )
 
-    async def _check_session(self, identity: IdentityPayload):
-        # check if session exists
-        return await validate(identity=identity)
+
+
+    def _parse_datetime(self, value: Any) -> datetime | None:
+        if value is None:
+            return None
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, (int, float)):
+            return datetime.fromtimestamp(value, tz=timezone.utc)
+        if isinstance(value, str):
+            # OIDC claims don't pass iso format strings but still.
+            return datetime.fromisoformat(value)
+        raise ValueError("Cannot parse datetime from OIDC claim")
+
+
+    async def _oidc_oauth_registration(self, payload: JWKVerificationRequest) -> UUID:
+        '''
+        Returns a session token
+        '''
+        verified_claims = await process_id_token(payload)
+        oauth_payload = self._oauth_registration_from_verified_claims(verified_claims)
+
+        identity_service = IdentityService()
+        # check if user exists
+        if not isinstance(oauth_payload.id, str):
+            raise TypeError("OAuth payload is not sting.")
+        result = await identity_service.authenticate(OAuthAuthPayload(sub=oauth_payload.id, updated_at=oauth_payload.updated_at))
+        if result.value:
+            # it is there already. Create a session here.
+            token = await self._create_session(uid=oauth_payload.id)
+            return token
+        # register if not there
+        uid = await identity_service.register(oauth_payload)
+        token = await self._create_session(uid=uid)
+        return token
+
+    # async def _check_session(self, identity: IdentityPayload):
+    #     # check if session exists
+    #     return await validate(identity=identity)
 
     async def _create_session(self, identity: IdentityPayload | None = None, uid: Uid | None = None) -> UUID:
         if await validate(identity, uid):
