@@ -5,11 +5,11 @@ from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID, uuid4
 
-from pydantic import AnyHttpUrl, BaseModel, Field, model_validator, ConfigDict
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, model_validator
 from validation_helper import Addresses, Mail, Password, ProviderName, Uid, UserName
 
+from ..constants.providers import DiscordClaimSchema, GitHubClaimSchema, OAuthProviders
 from ..core.enums import OperationIntentions
-from ..constants.providers import OAuthProviders, GitHubClaimSchema, DiscordClaimSchema
 
 # ---------------- Cadence Schemas
 
@@ -178,7 +178,7 @@ class ResourceRequestPayload(BaseModel):
 
 class ResourceResponsePayload(BaseModel):
     provider: OAuthProviders
-    claim_schema: GitHubClaimSchema | DiscordClaimSchema
+    claim_schema: GitHubClaimSchema | DiscordClaimSchema | None
 
 # ------------------- Session
 
