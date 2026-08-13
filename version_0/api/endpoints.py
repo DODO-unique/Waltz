@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-from ..validators.endpoint_validators import LocalAuthPayload, WaltzResult
-from ..validators.core_validator import LocalAuthRegistrationPayload
-from ..core.idenity_service import IdentityService
+from ..validators.endpoint_validators import LocalAuthPayload, WaltzResult, RequestByIdentity, RequestByMail
+from ..validators.core_validator import LocalAuthRegistrationPayload, ProviderName, AuthorizationResponse, IdentityPayload
 from ..core.orchestration import Orchestra
 
 def routes(prefix: str):
@@ -27,9 +26,23 @@ def routes(prefix: str):
         '''
         return Orchestra().oauth_authorization_request(payload)
     
-    @waltz.post('/oauth/authResponse')
+    @waltz.post('/oauth/authResponse') 
     async def auth_code(payload: AuthorizationResponse):
         return await Orchestra().initiate_trade(payload)
 
     @waltz('/verify/email')
-
+    async def dispatch_mail(payload: RequestByMail | RequestByIdentity):
+        orc = Orchestra()
+        if isinstance(payload, RequestByIdentity):
+            identity = IdentityPayload(
+                uname=payload.uname
+            )
+            orc.initiate_email_validation(identity)
+            return WaltzResult(
+                status="indetermined"
+            )
+        else:
+            identity = IdentityPayload(
+                email=payload.email
+            )
+            orc.initiate_email_validation(identity)
