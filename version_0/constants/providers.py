@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Any
 
-from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, field_validator
+from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, field_validator, ValidationInfo
 
 # -----------------------------------------------------------------
 # 0. Claim Schemas
@@ -15,7 +16,7 @@ class DiscordClaimSchema(ClaimSchema):
     id: str
     username: str
     discriminator: str
-    avatar: str | None = None
+    avatar_hash: AnyHttpUrl | None = None
     email: EmailStr | None = None
     verified: bool | None = False
     updated_at: datetime = Field(
@@ -28,7 +29,7 @@ class GitHubClaimSchema(ClaimSchema):
     login: str
     name: str | None = None
     email: EmailStr | None = None
-    avatar_url: HttpUrl | None = None
+    avatar_url: AnyHttpUrl | None = None
     updated_at: datetime
 
     @field_validator("id", mode="before")
