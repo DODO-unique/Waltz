@@ -12,7 +12,7 @@ class LocalAuthPayload(BaseModel):
 class WaltzResult(BaseModel):
     status: Literal['success', 'failure']
     details: dict[str, Any] | None = None
-    payload: dict[str, Any]
+    payload: dict[str, Any] | None = None
 
 class LogOutPayload(BaseModel):
     token: UUID
