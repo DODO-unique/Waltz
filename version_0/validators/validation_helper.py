@@ -1,5 +1,4 @@
-from collections.abc import Awaitable, Callable
-from typing import Annotated, Any, Literal, TypeAlias
+from typing import Annotated, Literal, TypeAlias
 from uuid import UUID
 
 from email_validator import EmailNotValidError, validate_email
@@ -11,8 +10,6 @@ from pydantic import (
     StringConstraints,
 )
 
-from error_handler import ErrorCodes, initiate_error_handler
-
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def normalize_uname(v: str):
@@ -23,13 +20,13 @@ def normalize_uname(v: str):
 
 def check_username_rules(v: str):
     if v.startswith(("_", ".")) or v.endswith((".", "_")):
-        initiate_error_handler("Username cannot start or end with '_' or '.'", errCode=ErrorCodes.INVALID_USERNAME_FORMAT.value, error=ValueError("Invalid username"))
+        raise ValueError("Username cannot start or end with '_' or '.'")
 
     if ".." in v or "__" in v:
-        initiate_error_handler("Username cannot contain consecutive periods or underscores", errCode=ErrorCodes.INVALID_USERNAME_FORMAT.value, error=ValueError("Invalid username"))
+        raise ValueError("Username cannot contain consecutive periods or underscores")
     
     if v in prohibited_usernames:
-        initiate_error_handler("Username is prohibited", errCode=ErrorCodes.INVALID_USERNAME_FORMAT.value, error=ValueError("Invalid username"))
+        raise ValueError("Username is prohibited")
     return v
 
 
@@ -57,7 +54,7 @@ def strip_password(v: str):
 
 def check_password_rules(v: SecretStr):
     if " " in v.get_secret_value():
-        initiate_error_handler("Password cannot contain spaces", errCode=ErrorCodes.INVALID_PASSWORD_FORMAT.value, error=ValueError("Invalid password"))
+        raise ValueError("Password cannot contain spaces")
     return v
 
 Password = Annotated[
@@ -84,7 +81,7 @@ def process_mail(value: str):
         email = validated_email.normalized
         return email
     except EmailNotValidError as e: #type: ignore
-        initiate_error_handler(message="Invalid email format", errCode=ErrorCodes.INVALID_EMAIL_FORMAT.value, error=e)
+        raise ValueError("Invalid email format") from e
 
 
 Mail = Annotated[str, BeforeValidator(process_mail)]
