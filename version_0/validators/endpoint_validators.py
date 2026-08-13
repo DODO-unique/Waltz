@@ -2,7 +2,7 @@ from typing import Any, Literal
 
 from core_validator import UUID, IdentityPayload
 from pydantic import BaseModel
-from validation_helper import Password
+from validation_helper import Mail, Password, UserName
 
 
 class LocalAuthPayload(BaseModel):
@@ -17,3 +17,14 @@ class WaltzResult(BaseModel):
 class LogOutPayload(BaseModel):
     token: UUID
     identity: IdentityPayload
+
+class BaseMail(BaseModel):
+    pass
+
+class RequestByMail(BaseMail):
+    email: Mail
+
+class RequestByIdentity(BaseMail):
+    uname: UserName
+
+MailPayload = RequestByMail | RequestByIdentity
