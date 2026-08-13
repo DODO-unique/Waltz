@@ -10,6 +10,7 @@ from ..validators.core_validator import (
     OAuthRegistration,
     SessionRequest,
     Uid,
+    Mail
 )
 
 
@@ -18,6 +19,7 @@ class Operation:
         GET_ID = 'get_id'
         GET_USER_LOCAL = 'get_user_local'
         GET_USER_OAUTH = 'get_user_oauth'
+        GET_USER_MAIL = 'get_user_mail'
         REGISTER_USER_OAUTH = 'register_user'
         REGISTER_USER_LOCAL = 'register_user_local'
 
@@ -55,6 +57,11 @@ class User:
 
     GetUserOAuth: OperationIntentions[Uid, OAuthRegistration | None] = OperationIntentions(
         operation = Operation.User.GET_USER_OAUTH,
+        payload = Uid
+    )
+
+    GetUserMail: OperationIntentions[Uid, Mail | None] = OperationIntentions(
+        operation = Operation.User.GET_USER_MAIL,
         payload = Uid
     )
 
