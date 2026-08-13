@@ -10,7 +10,7 @@ class LocalAuthPayload(BaseModel):
     password: Password
 
 class WaltzResult(BaseModel):
-    status: Literal['success', 'failure']
+    status: Literal['success', 'failure', 'indetermined']
     details: dict[str, Any] | None = None
     payload: dict[str, Any] | None = None
 
