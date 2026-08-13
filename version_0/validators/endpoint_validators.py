@@ -27,4 +27,6 @@ class RequestByMail(BaseMail):
 class RequestByIdentity(BaseMail):
     uname: UserName
 
-MailPayload = RequestByMail | RequestByIdentity
+class ValidationPayload(BaseModel):
+    identity: IdentityPayload
+    code: str
