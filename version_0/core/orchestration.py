@@ -1,28 +1,30 @@
-from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
+from uuid import UUID, uuid4
 
 from idenity_service import IdentityService
 from serenity import Serenity
+from session_manager import destroy, destroy_all, start, validate
+
+from ..constants.providers import DiscordClaimSchema, GitHubClaimSchema
 from ..security.jwt_handler import process_id_token
-from ..validators.endpoint_validators import WaltzResult, LocalAuthPayload
 from ..validators.core_validator import (
-    IdentityPayload,
-    LocalAuthRegistrationPayload,
-    OAuthRegistration,
-    JWKVerificationRequest,
-    ProviderName,
-    Uid,
     AuthorizationResponse,
+    IdentityPayload,
+    JWKVerificationRequest,
+    LocalAuthRegistrationPayload,
+    OAuthAuthPayload,
+    OAuthRegistration,
+    ProviderName,
     ResourceRequestPayload,
     ResourceResponsePayload,
-    OAuthAuthPayload
+    Uid,
 )
-from ..constants.providers import GitHubClaimSchema, DiscordClaimSchema
-from datetime import timezone
-from session_manager import start, destroy, check_token, validate
-
-from uuid import uuid4
+from ..validators.endpoint_validators import (
+    LocalAuthPayload,
+    LogOutPayload,
+    WaltzResult,
+)
 
 
 class Orchestra:
@@ -109,19 +111,8 @@ class Orchestra:
         identity = IdentityService()
         if payload.provider.value == 1 and isinstance(payload.claim_schema, GitHubClaimSchema): #github
             claims = payload.claim_schema
-            # check if user exists
             subject = claims.id
             updated_at = claims.updated_at
-            result = await identity.authenticate(OAuthAuthPayload(
-                sub=subject,
-                updated_at=updated_at
-            ))
-
-            if result.value:
-                token = await self._create_session(uid=subject)
-                return token
-            
-
             registeration_data = OAuthRegistration(
                 id=claims.id,
                 name=claims.name,
@@ -133,13 +124,35 @@ class Orchestra:
                 updated_at=claims.updated_at
             )
 
-            uid = await identity.register(registeration_data)
-            token = await self._create_session(uid=uid)
+        elif payload.provider.value == 2 and isinstance(payload.claim_schema, DiscordClaimSchema):
+            claims = payload.claim_schema
+            subject = claims.id
+            updated_at = claims.updated_at
+
+            registeration_data = OAuthRegistration(
+                id=subject,
+                identity=IdentityPayload(
+                    uname=claims.username,
+                    email=claims.email,
+                ),
+                picture=claims.avatar_hash,
+                updated_at=updated_at
+            )
+        else:
+            raise ValueError("Provider not supported")
+
+        result = await identity.authenticate(OAuthAuthPayload(
+            sub=subject,
+            updated_at=updated_at
+        ))
+
+        if result.value:
+            token = await self._create_session(uid=subject)
             return token
-
-        if payload.provider.value == 2 and isinstance(payload.claim_schema, DiscordClaimSchema):
-            claims
-
+        
+        uid = await identity.register(registeration_data)
+        token = await self._create_session(uid=uid)
+        return token
 
 
     def _oauth_registration_from_verified_claims(self, verified_claims: dict[str, Any]) -> OAuthRegistration:
