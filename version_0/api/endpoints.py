@@ -30,19 +30,18 @@ def routes(prefix: str):
     async def auth_code(payload: AuthorizationResponse):
         return await Orchestra().initiate_trade(payload)
 
-    @waltz('/verify/email')
+    @waltz.post('/verify/email/sent')
     async def dispatch_mail(payload: RequestByMail | RequestByIdentity):
         orc = Orchestra()
-        if isinstance(payload, RequestByIdentity):
-            identity = IdentityPayload(
-                uname=payload.uname
-            )
-            orc.initiate_email_validation(identity)
-            return WaltzResult(
-                status="indetermined"
-            )
-        else:
-            identity = IdentityPayload(
-                email=payload.email
-            )
-            orc.initiate_email_validation(identity)
+        
+        identity = IdentityPayload(uname=payload.uname) if isinstance(payload, RequestByIdentity) else IdentityPayload(email=payload.email)
+        await orc.initiate_email_validation(identity)
+        return WaltzResult(
+            status="indetermined"
+        )
+
+    @waltz.post('/verify/email/validate')
+    async def validate_mail(payload: ValidationPayload):
+        orc = Orchestra()
+
+        return await orc.email_validation(payload)
