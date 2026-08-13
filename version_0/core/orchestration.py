@@ -232,3 +232,11 @@ class Orchestra:
             raise ValueError("User exists")
         return await start(identity, uid)
 
+    async def log_out(self, payload: LogOutPayload, all_accounts: bool = False):
+        if all_accounts:
+            await destroy_all(payload.identity)
+            return WaltzResult(
+                status="success"
+            )
+        await destroy(payload.token)
+        
