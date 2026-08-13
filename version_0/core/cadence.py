@@ -1,8 +1,7 @@
 from random import randint
 from uuid import uuid4
 
-from idenity_service import IdentityService
-from enums import OneTimePassword, User
+from enums import OneTimePassword
 from security.hashing import sha_hash
 
 from ..core.general import dispatch_ticket, get_id, publish_ticket
@@ -11,8 +10,7 @@ from ..validators.core_validator import (
     CadenceTicket,
     IdentityPayload,
     Mail,
-    TicketType,
-    UserName
+    TicketType
 )
 
 
@@ -35,15 +33,6 @@ class Cadence:
     def __init__(self, email: Mail):
         self.email = email
 
-    async def get_email_by_uname(self, uname: UserName):
-        uid = await get_id(IdentityPayload(uname=uname))
-        if uid is None:
-            raise ValueError("User does not exist")
-        await publish_ticket(
-            TicketType(id=uuid4(),
-            type=User.GetEmail,
-            payload=uid)
-        )
 
     async def issue(self):
         '''
