@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+
 from pydantic import AnyHttpUrl, BaseModel, EmailStr, HttpUrl
 
 # -----------------------------------------------------------------
