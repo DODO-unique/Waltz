@@ -3,7 +3,15 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
-from pydantic import AnyHttpUrl, BaseModel, ConfigDict, EmailStr, Field, HttpUrl, field_validator, ValidationInfo
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    ValidationInfo,
+    field_validator,
+)
 
 # -----------------------------------------------------------------
 # 0. Claim Schemas
@@ -22,6 +30,16 @@ class DiscordClaimSchema(ClaimSchema):
     updated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def transform_avatar_hash_to_url(cls, v: Any, info: ValidationInfo) -> str | None:
+        if isinstance(v, str) and v.startswith("http"):
+            return v
+        data = info.data if hasattr(info, "data") else {}
+        user_id = data.get("id")
+        ext = "gif" if v.startswith("a_") else "png"
+        return f"https://cdn.discordapp.com/avatars/{user_id}/{v}.{ext}"
 
 
 class GitHubClaimSchema(ClaimSchema):
