@@ -15,7 +15,7 @@ All session ops live here. They include:
 5. Session cleanup (optional. Remove all expired sessions)
 '''
 
-async def _get_token(uid: Uid) -> UUID:
+async def _get_token(uid: Uid) -> UUID | None:
     token = await publish_ticket(
         TicketType(
             type = Session.GetToken,
@@ -25,16 +25,13 @@ async def _get_token(uid: Uid) -> UUID:
         )
     )
 
-    if token is None:
-        raise ValueError("Token not found or uid does not exist. ")
-
     return token
 
-async def start(identity: IdentityPayload) -> UUID:
-
-    uid = await get_id(identity)
-    if uid is None:
-        raise ValueError("No user found")
+async def start(identity: IdentityPayload | None = None, uid: Uid | None = None) -> UUID:
+    if uid is None and identity is not None:
+        uid = await get_id(identity)
+        if uid is None:
+            raise ValueError("No user found")
     token = await publish_ticket(
         TicketType(
             type=Session.Create,
@@ -47,6 +44,7 @@ async def start(identity: IdentityPayload) -> UUID:
     return token
 
 
+
 async def destroy(token: UUID):
     await publish_ticket(
         TicketType(
@@ -57,6 +55,7 @@ async def destroy(token: UUID):
     )
 
 async def check_token(token: UUID) -> bool:
+    # FIXME: I am not so sure about this method. Do you need this? If you do, then at least check the expiry here? Doesn't get_token already verify if token exists?
     predicate = await publish_ticket(
         TicketType(
             id=uuid4(),
@@ -67,12 +66,17 @@ async def check_token(token: UUID) -> bool:
 
     return predicate
 
-async def validate(identity: IdentityPayload):
-    uid = await get_id(identity)
+async def validate(identity: IdentityPayload | None = None, uid: Uid | None = None):
     if uid is None:
-        raise ValueError("No user found")
-
+        if identity is not None:
+            uid = await get_id(identity)
+            if uid is None:
+                raise ValueError("No user found")
+        else:
+            raise ValueError("INTERNAL: Both identity and uid cannot be none")
     token = await _get_token(uid)
+    if token is None:
+        raise ValueError("No session token found")
 
     return await check_token(token)
     
