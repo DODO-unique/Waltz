@@ -3,11 +3,14 @@ from general import get_id, publish_ticket
 
 from ..security.hashing import compare_password
 from ..validators.core_validator import (
+    IdentityPayload,
     LocalAuthRegistrationPayload,
+    Mail,
     OAuthAuthPayload,
     OAuthRegistration,
     TicketType,
     Uid,
+    UserName,
 )
 from ..validators.endpoint_validators import LocalAuthPayload
 
@@ -82,10 +85,10 @@ class IdentityService:
             # if uid is None then the user does not exist. So we return False as 'not authenticated'
             if uid is None:
                 return AuthResultEnum.USER_NOT_FOUND
-            # get bassword in string
+            # get b\password in string
             password_body: str = await publish_ticket(
                     TicketType(
-                        type= User.GetUserLocal,
+                        type= User.GetUserPassLocal,
                         payload=uid
                     )
                 )
@@ -100,3 +103,15 @@ class IdentityService:
 
     async def update_user(self) -> None:
         pass
+
+    
+    async def get_email_by_uname(self, uname: UserName):
+        uid = await get_id(IdentityPayload(uname=uname))
+        if uid is None:
+            raise ValueError("User does not exist")
+        mail: Mail = await publish_ticket(
+            TicketType(
+            type=User.GetMail,
+            payload=uid)
+        )
+        return mail
