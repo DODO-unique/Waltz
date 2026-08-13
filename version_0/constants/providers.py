@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from enum import Enum
 from pydantic import AnyHttpUrl, BaseModel, EmailStr, HttpUrl
 
 # ------------------------------------------------------------------
@@ -60,3 +60,8 @@ GitHubSchema = BaseOAuthProvider(
         "accept" : "application/vnd.github+json"
     }
 )
+
+class OAuthProviders(Enum):
+    NONE = 0
+    GITHUB = 1
+    DISORD = 2
