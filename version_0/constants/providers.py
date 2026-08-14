@@ -13,6 +13,12 @@ from pydantic import (
     field_validator,
 )
 
+from version_0.logging.logger import get_logger
+
+logger = get_logger("constants.providers")
+
+logger.debug("constants.providers module loaded")
+
 # -----------------------------------------------------------------
 # 0. Claim Schemas
 # -----------------------------------------------------------------
@@ -34,12 +40,15 @@ class DiscordClaimSchema(ClaimSchema):
     @field_validator("id", mode="before")
     @classmethod
     def transform_avatar_hash_to_url(cls, v: Any, info: ValidationInfo) -> str | None:
+        logger.debug("transform_avatar_hash_to_url called for v=%s", v)
         if isinstance(v, str) and v.startswith("http"):
             return v
         data = info.data if hasattr(info, "data") else {}
         user_id = data.get("id")
         ext = "gif" if v.startswith("a_") else "png"
-        return f"https://cdn.discordapp.com/avatars/{user_id}/{v}.{ext}"
+        url = f"https://cdn.discordapp.com/avatars/{user_id}/{v}.{ext}"
+        logger.debug("Transformed avatar hash to url=%s", url)
+        return url
 
 
 class GitHubClaimSchema(ClaimSchema):
@@ -53,7 +62,10 @@ class GitHubClaimSchema(ClaimSchema):
     @field_validator("id", mode="before")
     @classmethod
     def convert_id_to_string(cls, v:int | str) -> str:
-        return str(v)
+        logger.debug("convert_id_to_string called with v=%s", v)
+        s = str(v)
+        logger.debug("Converted id to string=%s", s)
+        return s
 
 
 # ------------------------------------------------------------------
