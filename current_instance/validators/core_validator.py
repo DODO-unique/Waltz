@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 
 from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, model_validator
 
-from version_0.logging.logger import get_logger
+from ..logging.logger import get_logger
 
 logger = get_logger("validators.core_validator")
 

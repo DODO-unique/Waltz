@@ -1,8 +1,9 @@
 from enums import User
 
+from ..logging.logger import get_logger
 from ..sdk.ticket_handler import TicketBus
 from ..validators.core_validator import CadenceTicket, IdentityPayload, TicketType, Uid
-from version_0.logging.logger import get_logger
+
 logger = get_logger("core.general")
 
 logger.debug("core.general module loaded")

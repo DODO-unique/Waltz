@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 
-from version_0.logging.logger import get_logger
+from ..logging.logger import get_logger
+
 logger = get_logger("core.session_manager")
 
 logger.debug("core.session_manager module loaded")

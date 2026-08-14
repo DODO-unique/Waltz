@@ -3,7 +3,8 @@ from typing import Any, TypeAlias
 
 from listeners import Listeners
 
-from version_0.logging.logger import get_logger
+from ..logging.logger import get_logger
+
 logger = get_logger("sdk.ticket_handler")
 
 logger.debug("sdk.ticket_handler module loaded")

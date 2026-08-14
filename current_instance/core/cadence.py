@@ -1,12 +1,14 @@
 from random import randint
 
-from version_0.logging.logger import get_logger
+from ..logging.logger import get_logger
+
 logger = get_logger("core.cadence")
 
 logger.debug("core.cadence module loaded")
 from uuid import uuid4
 
 from enums import OneTimePassword
+
 from security.hashing import sha_hash
 
 from ..core.general import dispatch_ticket, get_id, publish_ticket

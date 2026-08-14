@@ -3,7 +3,8 @@ from uuid import uuid4
 
 import httpx
 
-from version_0.logging.logger import get_logger
+from ..logging.logger import get_logger
+
 logger = get_logger("core.serenity")
 
 logger.debug("core.serenity module loaded")

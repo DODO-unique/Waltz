@@ -5,9 +5,9 @@ import httpx
 import jwt
 from jwt import PyJWK
 
+from ..logging.logger import get_logger
 from ..validators.core_validator import JWKSchema, JWKVerificationRequest, ProviderName
 
-from version_0.logging.logger import get_logger
 logger = get_logger("security.jwt_handler")
 
 logger.debug("security.jwt_handler module loaded")

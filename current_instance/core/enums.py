@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from version_0.logging.logger import get_logger
+from ..logging.logger import get_logger
+
 logger = get_logger("core.enums")
 
 logger.debug("core.enums module loaded")

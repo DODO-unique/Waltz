@@ -2,8 +2,8 @@ from collections.abc import Awaitable, Callable
 from typing import TypeVar, get_args
 
 from ..core.enums import OperationIntentions
+from ..logging.logger import get_logger
 
-from version_0.logging.logger import get_logger
 logger = get_logger("sdk.listeners")
 
 logger.debug("sdk.listeners module loaded")
