@@ -36,7 +36,7 @@ class DiscordClaimSchema(ClaimSchema):
         default_factory=lambda: datetime.now(timezone.utc)
     )
 
-    @field_validator("id", mode="before")
+    @field_validator("avatar_hash", mode="before")
     @classmethod
     def transform_avatar_hash_to_url(cls, v: Any, info: ValidationInfo) -> str | None:
         logger.debug("transform_avatar_hash_to_url called for v=%s", v)
