@@ -1,6 +1,7 @@
 import time
 from uuid import UUID, uuid4
 
+from pydantic import ValidationError
 from version_0_1.exceptions.waltz_exceptions import (
     InvalidInternalStateException,
     SessionException,
@@ -21,7 +22,6 @@ from version_0_1.validators.core_validator import (
     SessionResponse,
     TicketType,
     Uid,
-    ValidationError,
 )
 
 # NOTE: MAJOR - I made them independent functions instead of a session class whcih was unnecessary
