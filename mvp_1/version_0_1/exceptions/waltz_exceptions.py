@@ -230,6 +230,11 @@ class DataIntegrityException(InternalException):
     default_code = "DATA_INTEGRITY_ERROR"
     default_severity = "medium"
 
+class OTPExpiredException(WaltzException):
+    """OTP Expired. Raised locally, to be caught."""
+
+    default_code = "OTP_EXPIRED"
+    default_severity = "high"
 
 __all__ = [
     "AuthenticationException",
@@ -247,6 +252,7 @@ __all__ = [
     "OAuthProviderException",
     "OAuthStateValidationException",
     "OIDCTokenInvalidException",
+    "OTPExpiredException",
     "PasswordValidationException",
     "RequiredFieldMissingException",
     "ResourceNotFoundException",
@@ -260,5 +266,5 @@ __all__ = [
     "UserNotFoundException",
     "UsernameValidationException",
     "ValidationException",
-    "WaltzException",
+    "WaltzException"
 ]

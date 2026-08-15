@@ -14,6 +14,7 @@ from .waltz_exceptions import (
     OAuthProviderException,
     OAuthStateValidationException,
     OIDCTokenInvalidException,
+    OTPExpiredException,
     PasswordValidationException,
     RequiredFieldMissingException,
     ResourceNotFoundException,
@@ -46,6 +47,7 @@ __all__ = [
     "OAuthProviderException",
     "OAuthStateValidationException",
     "OIDCTokenInvalidException",
+    "OTPExpiredException",
     "PasswordValidationException",
     "RequiredFieldMissingException",
     "ResourceNotFoundException",
@@ -59,5 +61,5 @@ __all__ = [
     "UserNotFoundException",
     "UsernameValidationException",
     "ValidationException",
-    "WaltzException",
+    "WaltzException"
 ]
