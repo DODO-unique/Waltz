@@ -5,15 +5,20 @@ from version_0_1.log.logger import get_logger
 logger = get_logger("core.cadence")
 
 logger.debug("core.cadence module loaded")
+import time
 from uuid import uuid4
 
 from version_0_1.core.enums import OneTimePassword
 from version_0_1.core.general import dispatch_ticket, get_id, publish_ticket
-from version_0_1.exceptions.waltz_exceptions import UserNotFoundException
+from version_0_1.exceptions.waltz_exceptions import (
+    OTPExpiredException,
+    UserNotFoundException,
+)
 from version_0_1.security.hashing import sha_hash
 from version_0_1.validators.core_validator import (
     CadencePayload,
     CadenceTicket,
+    FetchOTP,
     IdentityPayload,
     Mail,
     StoreOTP,
@@ -99,16 +104,19 @@ class Cadence:
         if uid is None:
             logger.error("Cadence.validate: No user found for email=%s", self.email)
             raise UserNotFoundException("No user found")
-        result: str | None = await publish_ticket(
+        result: FetchOTP = await publish_ticket(
             TicketType(
                 type=OneTimePassword.Get,
                 payload=uid
             )
         )
 
+        if result.expiry < time.time():
+            raise OTPExpiredException(f"OTP expired for {(result.expiry + time.time()) / 60} mins")
+
         given_otp_digest = sha_hash(code)
 
-        if given_otp_digest == result:
+        if given_otp_digest == result.digest:
             # it is correct, send a correct flag back and delete the otp
             await publish_ticket(
                 TicketType(
