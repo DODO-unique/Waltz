@@ -48,7 +48,7 @@ def routes(prefix: str):
         logger.debug("endpoint /oauth/init called provider=%s", payload)
         return Orchestra().oauth_authorization_request(payload)
     
-    @waltz.post('/oauth/authResponse') 
+    @waltz.get('/oauth/authResponse') 
     async def auth_code(payload: AuthorizationResponse):
         logger.debug("endpoint /oauth/authResponse called payload=%s", payload)
         return await Orchestra().initiate_trade(payload)
