@@ -16,7 +16,9 @@ from version_0_1.validators.core_validator import (
     CadenceTicket,
     IdentityPayload,
     Mail,
+    StoreOTP,
     TicketType,
+    Uid,
 )
 
 
@@ -40,7 +42,7 @@ class Cadence:
         self.email = email
 
 
-    async def issue(self):
+    async def issue(self, uid: Uid):
         '''
         Provider is the service provider
 
@@ -62,7 +64,10 @@ class Cadence:
         await publish_ticket(
             TicketType(id=uuid4(),
             type=OneTimePassword.Store,
-            payload= digest
+            payload= StoreOTP(
+                digest=digest,
+                uid=uid
+            )
             )
         )
 
