@@ -230,13 +230,13 @@ class Credentials(OAuthCredentials):
     provider : ProviderName
 
 class Registry(SDKSchemas):
-    database : set[DatabaseRegistry]
-    cadence : Callable[[CadencePayload], None] | None
-    serenity : set[Credentials]
+    database : set[DatabaseRegistry] = set()
+    cadence : Callable[[CadencePayload], None] | None = None
+    serenity : set[Credentials] = set()
 
 class GrandRegistry(Registry):
-    registered_database_operation : set[OperationIntentions[Any, Any]]
-    registered_serenity_providers : set[ProviderName] 
+    registered_database_operation : set[OperationIntentions[Any, Any]] = set()
+    registered_serenity_providers : set[ProviderName]  = set()
     # cadence, database, serenity
 
 class TicketType(BaseModel):
