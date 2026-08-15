@@ -168,9 +168,9 @@ class Serenity:
         '''
         if isinstance(payload, AuthorizationSuccess):
             logger.debug("trade: AuthorizationSuccess received for provider=%s", payload.provider)
-            state_store.pop(AuthorizationSuccess.state)
+            state_store.pop(payload.state)
             creds = self._fetch_creds(payload.provider)
-            authorization_code = AuthorizationSuccess.code
+            authorization_code = payload.code
             
             request = TokenRequest(
                 code=authorization_code,
