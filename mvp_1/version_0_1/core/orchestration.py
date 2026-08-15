@@ -5,9 +5,10 @@ from uuid import UUID, uuid4
 from version_0_1.core.cadence import Cadence
 from version_0_1.exceptions.waltz_exceptions import (
     OIDCTokenInvalidException,
+    SessionTokenNotFoundException,
     TypeMismatchException,
     UnsupportedProviderException,
-    UserExistsException,
+    UserNotFoundException,
 )
 from version_0_1.log.logger import get_logger
 
@@ -17,7 +18,13 @@ logger.debug("core.orchestration module loaded")
 from version_0_1.constants.providers import DiscordClaimSchema, GitHubClaimSchema
 from version_0_1.core.idenity_service import IdentityService
 from version_0_1.core.serenity import Serenity
-from version_0_1.core.session_manager import destroy, destroy_all, start, validate
+from version_0_1.core.session_manager import (
+    check_session,
+    destroy,
+    destroy_all,
+    fetch_token,
+    start,
+)
 from version_0_1.security.jwt_handler import process_id_token
 from version_0_1.validators.core_validator import (
     AuthorizationResponse,
@@ -255,14 +262,37 @@ class Orchestra:
 
     # async def _check_session(self, identity: IdentityPayload):
     #     # check if session exists
-    #     return await validate(identity=identity)
+    #     return await check_session(identity=identity)
+
+    async def _check_session(self, identity: IdentityPayload | None = None, uid: Uid | None = None) -> bool:
+        '''
+        True = session running
+        False = no session running
+        '''
+        try:
+            predicate = await check_session(identity, uid)
+        except SessionTokenNotFoundException:
+            logger.warning("No session token found. Returning False")
+            predicate = False
+
+        return predicate
 
     async def _create_session(self, identity: IdentityPayload | None = None, uid: Uid | None = None) -> UUID:
+        '''
+        create a session.
+        Returns a token.
+        '''
         logger.debug("_create_session called identity=%s uid=%s", identity, uid)
-        if await validate(identity, uid):
-            logger.error("_create_session: user exists identity=%s uid=%s", identity, uid)
-            raise UserExistsException("User exists")
-        token = await start(identity, uid)
+        try:
+            if not await self._check_session(identity, uid):
+                token = await start(identity, uid)
+            else:
+                token = await fetch_token(identity, uid)
+                if token is None:
+                    token = await start(identity, uid)
+        except UserNotFoundException:
+            logger.critical("User not found while creating new session. Aborting")
+            raise UserNotFoundException("Session could not be created. Check if Registration succeeded.")
         logger.info("_create_session created token=%s for uid=%s", token, uid)
         return token
 
