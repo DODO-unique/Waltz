@@ -16,6 +16,7 @@ from version_0_1.validators.core_validator import (
     Mail,
     OAuthRegistration,
     SessionRequest,
+    SessionResponse,
     Uid,
 )
 
@@ -88,7 +89,7 @@ class Session:
         payload = SessionRequest
     )
 
-    Check: OperationIntentions[SessionRequest, bool] = OperationIntentions(
+    Check: OperationIntentions[SessionRequest, SessionResponse] = OperationIntentions(
         operation = Operation.Session.CHECK,
         payload = SessionRequest
     )
@@ -103,7 +104,7 @@ class Session:
         payload = SessionRequest
     )
 
-    GetToken: OperationIntentions[SessionRequest, UUID] = OperationIntentions(
+    GetToken: OperationIntentions[SessionRequest, SessionResponse] = OperationIntentions(
         operation = Operation.Session.GET_TOKEN,
         payload = SessionRequest
     )
