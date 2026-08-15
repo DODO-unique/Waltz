@@ -1,5 +1,6 @@
 # --------------------- Imports
 
+import time
 from collections.abc import Callable
 from datetime import datetime
 from typing import Any, Literal
@@ -196,6 +197,11 @@ class ResourceResponsePayload(BaseModel):
 class SessionRequest(BaseModel):
     Uid: Uid | None = None
     token: UUID = Field(default_factory=uuid4)
+    expiry: float = time.time()
+
+class SessionResponse(BaseModel):
+    token: UUID | None = None
+    expiry: float
 
 
 # ------------------- SDK Schemas
