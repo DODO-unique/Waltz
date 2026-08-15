@@ -28,7 +28,7 @@ class Listeners:
 
     def __init__(self, base_uri: str | None = None) -> None:
         # TODO: I think we can refactor this dictonary idea into organized pydantic classes
-        self.registry: Registry
+        self.registry: Registry = Registry()
 
         # NOTE: URI only for OAuth
         self.REDIRECT_URI = None if base_uri is None else base_uri.rstrip("/") + "/auth/oauth/authResponse"

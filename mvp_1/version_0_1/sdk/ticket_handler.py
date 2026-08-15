@@ -34,7 +34,7 @@ class TicketBus:
 
         return type for listener is dict[str, str], so basically a payload
         '''
-        self.grand_registry: GrandRegistry
+        self.grand_registry: GrandRegistry = GrandRegistry() 
         logger.debug("TicketBus initialized")
     
     def subscribe(self, *listeners: Listeners):
