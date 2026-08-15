@@ -126,13 +126,9 @@ class Serenity:
 
         creds = self._fetch_creds(provider_name)
 
-        scope = (
-            ["openid", "email", "profile"] 
-            if provider_name != "github" 
-            else ["read:user", "user:email"]
-        )
+        scope = []
 
-        if category.value:
+        if not category.value:
             scope = ["openid", "email", "profile"] 
         else:
             if provider_name == "discord":
