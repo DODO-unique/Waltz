@@ -17,6 +17,7 @@ from version_0_1.validators.core_validator import (
     OAuthRegistration,
     SessionRequest,
     SessionResponse,
+    StoreOTP,
     Uid,
 )
 
@@ -111,9 +112,9 @@ class Session:
 
 
 class OneTimePassword:
-    Store: OperationIntentions[str, None] = OperationIntentions(
+    Store: OperationIntentions[StoreOTP, None] = OperationIntentions(
         operation = Operation.OneTimePassword.STORE,
-        payload = str
+        payload = StoreOTP
     )
 
     Get: OperationIntentions[Uid, str | None] = OperationIntentions(
