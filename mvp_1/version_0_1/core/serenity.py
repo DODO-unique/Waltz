@@ -171,7 +171,8 @@ class Serenity:
             request = TokenRequest(
                 code=authorization_code,
                 redirect_uri=creds.redirect_uri,
-                client_id=creds.client_id
+                client_id=creds.client_id,
+                client_secret=creds.client_secret
             )
 
             async with httpx.AsyncClient() as client:
