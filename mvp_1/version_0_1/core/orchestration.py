@@ -16,7 +16,7 @@ logger = get_logger("core.orchestration")
 
 logger.debug("core.orchestration module loaded")
 from version_0_1.constants.providers import DiscordClaimSchema, GitHubClaimSchema
-from version_0_1.core.idenity_service import IdentityService
+from version_0_1.core.idenity_service import IdentityService, get_id
 from version_0_1.core.serenity import Serenity
 from version_0_1.core.session_manager import (
     check_session,
@@ -310,8 +310,11 @@ class Orchestra:
             assert identity.uname is not None # IdentityPayload enforces either one to be not None locally
             mail = await self._get_mail(identity.uname)
         caddy = Cadence(email=mail)
+        uid = await get_id(identity)
+        if uid is None:
+            raise UserNotFoundException("No user found when trying to create email")
 
-        await caddy.issue()
+        await caddy.issue(uid)
 
     async def email_validation(self, payload: ValidationPayload):
         mail = payload.identity.email
