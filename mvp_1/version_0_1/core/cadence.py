@@ -1,19 +1,17 @@
 from random import randint
 
-from ..logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("core.cadence")
 
 logger.debug("core.cadence module loaded")
 from uuid import uuid4
 
-from enums import OneTimePassword
-
-from security.hashing import sha_hash
-
-from ..core.general import dispatch_ticket, get_id, publish_ticket
-from ..exceptions.waltz_exceptions import UserNotFoundException
-from ..validators.core_validator import (
+from version_0_1.core.enums import OneTimePassword
+from version_0_1.core.general import dispatch_ticket, get_id, publish_ticket
+from version_0_1.exceptions.waltz_exceptions import UserNotFoundException
+from version_0_1.security.hashing import sha_hash
+from version_0_1.validators.core_validator import (
     CadencePayload,
     CadenceTicket,
     IdentityPayload,

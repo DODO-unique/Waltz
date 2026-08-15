@@ -1,19 +1,18 @@
 from fastapi import APIRouter
-
-from ..logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("api.endpoints")
 
 logger.debug("api.endpoints module loaded")
 
-from ..core.orchestration import Orchestra
-from ..validators.core_validator import (
+from version_0_1.core.orchestration import Orchestra
+from version_0_1.validators.core_validator import (
     AuthorizationResponse,
     IdentityPayload,
     LocalAuthRegistrationPayload,
     ProviderName,
 )
-from ..validators.endpoint_validators import (
+from version_0_1.validators.endpoint_validators import (
     LocalAuthPayload,
     RequestByIdentity,
     RequestByMail,

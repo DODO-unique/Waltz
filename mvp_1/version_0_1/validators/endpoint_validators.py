@@ -1,6 +1,6 @@
 from typing import Any, Literal
 
-from version_0_1.logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("validators.endpoint_validators")
 

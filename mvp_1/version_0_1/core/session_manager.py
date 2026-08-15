@@ -1,20 +1,24 @@
 from uuid import UUID, uuid4
 
-from ..exceptions.waltz_exceptions import (
+from version_0_1.exceptions.waltz_exceptions import (
     InvalidInternalStateException,
     SessionTokenNotFoundException,
     UserNotFoundException,
 )
-from ..logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("core.session_manager")
 
 logger.debug("core.session_manager module loaded")
 
-from enums import Session
-from general import get_id, publish_ticket
-
-from ..validators.core_validator import IdentityPayload, SessionRequest, TicketType, Uid
+from version_0_1.core.enums import Session
+from version_0_1.core.general import get_id, publish_ticket
+from version_0_1.validators.core_validator import (
+    IdentityPayload,
+    SessionRequest,
+    TicketType,
+    Uid,
+)
 
 # NOTE: MAJOR - I made them independent functions instead of a session class whcih was unnecessary
 '''

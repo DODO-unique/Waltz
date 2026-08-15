@@ -1,7 +1,7 @@
 import hashlib
 
 import bcrypt
-from version_0_1.logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("security.hashing")
 
