@@ -1,9 +1,11 @@
 from uuid import UUID, uuid4
+import time
 
 from version_0_1.exceptions.waltz_exceptions import (
     InvalidInternalStateException,
+    SessionException,
     SessionTokenNotFoundException,
-    UserNotFoundException,
+    UserNotFoundException
 )
 from version_0_1.log.logger import get_logger
 
@@ -16,8 +18,10 @@ from version_0_1.core.general import get_id, publish_ticket
 from version_0_1.validators.core_validator import (
     IdentityPayload,
     SessionRequest,
+    SessionResponse,
     TicketType,
     Uid,
+    ValidationError
 )
 
 # NOTE: MAJOR - I made them independent functions instead of a session class whcih was unnecessary
@@ -32,7 +36,7 @@ All session ops live here. They include:
 
 async def _get_token(uid: Uid) -> UUID | None:
     logger.debug("_get_token called for uid=%s", uid)
-    token = await publish_ticket(
+    resultPayload = await publish_ticket(
         TicketType(
             type = Session.GetToken,
             payload = SessionRequest(
@@ -41,8 +45,20 @@ async def _get_token(uid: Uid) -> UUID | None:
         )
     )
 
-    logger.debug("_get_token returned token=%s for uid=%s", token, uid)
-    return token
+    response = SessionResponse.model_validate(resultPayload)
+    
+
+    if response.expiry < time.time():
+        logger.debug("session for token=%f expired. Attempting destruction")
+        if response.token is not None:
+            await destroy(response.token)
+            return None
+        else:
+            # has an expiry time but no token - maybe incomplete response schema
+            raise SessionException("Token not provided in response schema.")
+
+    logger.debug("_get_token returned token=%s for uid=%s", response.token, uid)
+    return response.token
 
 async def start(identity: IdentityPayload | None = None, uid: Uid | None = None) -> UUID:
     logger.debug("start called with identity=%s uid=%s", identity, uid)
@@ -77,20 +93,37 @@ async def destroy(token: UUID):
     logger.info("Destroyed session token=%s", token)
 
 async def check_token(token: UUID) -> bool:
+    '''
+    This token is user facing and would receive token from a user to check if the token is still valid.
+    It is not to be used internally to check tokens.
+    '''
     logger.debug("check_token called for token=%s", token)
-    # FIXME: I am not so sure about this method. Do you need this? If you do, then at least check the expiry here? Doesn't get_token already verify if token exists?
-    predicate = await publish_ticket(
+    predicate = True
+    result = await publish_ticket(
         TicketType(
             id=uuid4(),
             type=Session.Check,
             payload=SessionRequest(token=token)
         )
     )
+    try:
+        response = SessionResponse.model_validate(result)
+    except ValidationError as e:
+        raise ValidationError("SessionResponse schema validation failed. Implement SessionResponse schema") from e
+    if response.expiry < time.time():
+        logger.debug("session for token=%f expired. Attempting destruction")
+        await destroy(token)
+        predicate = False
 
     logger.debug("check_token result=%s for token=%s", predicate, token)
     return predicate
 
-async def validate(identity: IdentityPayload | None = None, uid: Uid | None = None):
+async def check_session(identity: IdentityPayload | None = None, uid: Uid | None = None):
+    '''
+    Check if user has a running session.
+    if yes, return True
+    if no, return False
+    '''
     logger.debug("validate called identity=%s uid=%s", identity, uid)
     if uid is None:
         if identity is not None:
