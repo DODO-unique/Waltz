@@ -1,4 +1,4 @@
-from random import randint
+from secrets import randbelow
 
 from version_0_1.log.logger import get_logger
 
@@ -62,7 +62,7 @@ class Cadence:
         THis is a persistence decision.
         ''' 
         logger.debug("Cadence.issue called for email=%s", self.email)
-        code = randint(1000, 9999)
+        code = randbelow(900_000) + 100_000
         digest = sha_hash(str(code))
 
         # pass the digest to be stored in the DB
