@@ -53,6 +53,32 @@ class CadenceTicket(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     payload: CadencePayload
 
+class StoreOTP(BaseModel):
+    '''
+    Provided by Waltz.
+    Guaranteed values:
+        ```python
+        digest: str
+        uid: UUID | str
+        ```
+
+    Contains hashed digest of OTP and unique identification serial (str for OAuth subject, UUID for Waltz UID)
+    '''
+    digest: str
+    uid: Uid
+    expiry: float = time.time() + 600
+
+class FetchOTP(BaseModel):
+    '''
+    Provided by Waltz.
+    Guranteed values:
+        ```python
+        digest: str
+        expiry: float
+    '''
+    digest: str
+    expiry: float
+
 # ------------------ Identity Service
 
 class IdentityServiceSchema(BaseModel):
@@ -197,7 +223,7 @@ class ResourceResponsePayload(BaseModel):
 class SessionRequest(BaseModel):
     Uid: Uid | None = None
     token: UUID = Field(default_factory=uuid4)
-    expiry: float = time.time()
+    expiry: float = time.time() + 3600
 
 class SessionResponse(BaseModel):
     token: UUID | None = None
@@ -248,7 +274,7 @@ class GrandRegistry(Registry):
 class TicketType(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     type: OperationIntentions[Any, Any]
-    payload: OAuthRegistration | OAuthAuthPayload | LocalAuthRegistrationPayload | IdentityPayload | Uid | SessionRequest
+    payload: OAuthRegistration | OAuthAuthPayload | LocalAuthRegistrationPayload | IdentityPayload | Uid | SessionRequest | StoreOTP
 
 # ------------------- JWT
 
