@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from ..logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("core.enums")
 
@@ -10,7 +10,7 @@ from types import UnionType
 from typing import Generic, TypeVar
 from uuid import UUID
 
-from ..validators.core_validator import (
+from version_0_1.validators.core_validator import (
     IdentityPayload,
     LocalAuthRegistrationPayload,
     Mail,

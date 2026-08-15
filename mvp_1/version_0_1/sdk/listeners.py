@@ -7,7 +7,7 @@ from version_0_1.exceptions.waltz_exceptions import (
     MissingConfigurationException,
     UnsupportedProviderException,
 )
-from version_0_1.logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("sdk.listeners")
 

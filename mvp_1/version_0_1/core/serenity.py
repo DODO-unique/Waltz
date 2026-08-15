@@ -2,27 +2,25 @@ import secrets
 from uuid import uuid4
 
 import httpx
-
-from ..exceptions.waltz_exceptions import (
+from version_0_1.exceptions.waltz_exceptions import (
     OAuthNetworkException,
     OAuthProviderException,
     OAuthStateValidationException,
     UnsupportedProviderException,
 )
-from ..logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 logger = get_logger("core.serenity")
 
 logger.debug("core.serenity module loaded")
-from enums import ProviderCategory
-from general import bus
-
-from ..constants.providers import (
+from version_0_1.constants.providers import (
     DiscordSchema,
     GitHubSchema,
     OAuthProviders,
 )
-from ..validators.core_validator import (
+from version_0_1.core.enums import ProviderCategory
+from version_0_1.core.general import bus
+from version_0_1.validators.core_validator import (
     AnyHttpUrl,
     AuthorizationRequest,
     AuthorizationResponse,

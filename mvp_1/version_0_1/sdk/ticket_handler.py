@@ -6,7 +6,7 @@ from version_0_1.exceptions.waltz_exceptions import (
     DuplicateRegistrationException,
     ServiceNotRegisteredException,
 )
-from version_0_1.logging.logger import get_logger
+from version_0_1.log.logger import get_logger
 
 from .listeners import Listeners
 
