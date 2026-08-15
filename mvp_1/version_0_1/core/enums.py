@@ -11,6 +11,7 @@ from typing import Generic, TypeVar
 from uuid import UUID
 
 from version_0_1.validators.core_validator import (
+    FetchOTP,
     IdentityPayload,
     LocalAuthRegistrationPayload,
     Mail,
@@ -117,7 +118,7 @@ class OneTimePassword:
         payload = StoreOTP
     )
 
-    Get: OperationIntentions[Uid, str | None] = OperationIntentions(
+    Get: OperationIntentions[Uid, str | FetchOTP] = OperationIntentions(
         operation = Operation.OneTimePassword.GET,
         payload = Uid
     )
