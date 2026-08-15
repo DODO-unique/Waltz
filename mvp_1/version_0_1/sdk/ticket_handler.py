@@ -55,6 +55,7 @@ class TicketBus:
 
                 # we have to register this database entry at two places: one, the grand registry, two, the registered_database_operations
                 self.grand_registry.database.add(database_registry)
+                self.grand_registry.registered_database_operation.add(database_registry.operation)
 
             # A: Cadence Second
             if self.grand_registry.cadence is None:
@@ -68,6 +69,7 @@ class TicketBus:
                 if creds.provider in self.grand_registry.registered_serenity_providers:
                     raise DuplicateRegistrationException("Provider already registered")
 
+                self.grand_registry.registered_serenity_providers.add(creds.provider)
                 self.grand_registry.serenity.add(creds)
 
     
