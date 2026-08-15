@@ -1,11 +1,11 @@
-from uuid import UUID, uuid4
 import time
+from uuid import UUID, uuid4
 
 from version_0_1.exceptions.waltz_exceptions import (
     InvalidInternalStateException,
     SessionException,
     SessionTokenNotFoundException,
-    UserNotFoundException
+    UserNotFoundException,
 )
 from version_0_1.log.logger import get_logger
 
@@ -21,7 +21,7 @@ from version_0_1.validators.core_validator import (
     SessionResponse,
     TicketType,
     Uid,
-    ValidationError
+    ValidationError,
 )
 
 # NOTE: MAJOR - I made them independent functions instead of a session class whcih was unnecessary
@@ -34,8 +34,8 @@ All session ops live here. They include:
 5. Session cleanup (optional. Remove all expired sessions)
 '''
 
-async def _get_token(uid: Uid) -> UUID | None:
-    logger.debug("_get_token called for uid=%s", uid)
+async def get_token(uid: Uid) -> UUID | None:
+    logger.debug("get_token called for uid=%s", uid)
     resultPayload = await publish_ticket(
         TicketType(
             type = Session.GetToken,
@@ -57,8 +57,21 @@ async def _get_token(uid: Uid) -> UUID | None:
             # has an expiry time but no token - maybe incomplete response schema
             raise SessionException("Token not provided in response schema.")
 
-    logger.debug("_get_token returned token=%s for uid=%s", response.token, uid)
+    logger.debug("get_token returned token=%s for uid=%s", response.token, uid)
     return response.token
+
+async def fetch_token(identity: IdentityPayload | None = None, uid: Uid | None = None) -> UUID | None:
+    if uid is None:
+        if identity is not None:
+            uid = await get_id(identity)
+            if uid is None:
+                logger.error("validate failed: No user found for identity=%s", identity)
+                raise UserNotFoundException("No user found")
+        else:
+            logger.error("fetch token called with neither identity nor uid")
+            raise InvalidInternalStateException("INTERNAL: Both identity and uid cannot be none")
+    token = await get_token(uid)
+    return token
 
 async def start(identity: IdentityPayload | None = None, uid: Uid | None = None) -> UUID:
     logger.debug("start called with identity=%s uid=%s", identity, uid)
@@ -125,18 +138,11 @@ async def check_session(identity: IdentityPayload | None = None, uid: Uid | None
     if no, return False
     '''
     logger.debug("validate called identity=%s uid=%s", identity, uid)
-    if uid is None:
-        if identity is not None:
-            uid = await get_id(identity)
-            if uid is None:
-                logger.error("validate failed: No user found for identity=%s", identity)
-                raise UserNotFoundException("No user found")
-        else:
-            logger.error("validate called with neither identity nor uid")
-            raise InvalidInternalStateException("INTERNAL: Both identity and uid cannot be none")
-    token = await _get_token(uid)
+    token = await fetch_token(identity, uid)
+        
     if token is None:
-        logger.error("validate failed: No session token found for uid=%s", uid)
+        logger.debug("validate failed: No session token found for uid=%s", uid)
+        # not an error. handle if expected 
         raise SessionTokenNotFoundException("No session token found")
 
     result = await check_token(token)
