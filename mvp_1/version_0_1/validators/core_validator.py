@@ -98,7 +98,7 @@ class IdentityPayload(IdentityServiceSchema):
 
     @model_validator(mode="after")
     def check_contact(self):
-        logger.debug("IdentityPayload.check_contact called: email=%s, uname=%s", self.email, self.uname)
+        logger.debug("IdentityPayload.check_contact called. email_provided=%s, uname_provided=%s", self.email is not None, self.uname is not None)
         if self.email is None and self.uname is None:
             logger.error("IdentityPayload validation failed: neither email nor uname provided")
             raise RequiredFieldMissingException("Either email or uname must be provided.")

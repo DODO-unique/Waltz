@@ -77,24 +77,24 @@ class TicketBus:
         '''
         Publish a new database ticket.
         '''
-        logger.debug("publish called with ticket=%s", ticket)
+        logger.debug("publish called with ticket type=%s", ticket.type)
         registered_operations = {x.operation : x.operator for x in self.grand_registry.database}
         for operation, operator in registered_operations.items():
             if ticket.type == operation:
                 logger.debug("Dispatching to operation=%s", operation)
                 result = await operator(ticket.payload)
-                logger.debug("Operation %s returned result=%s", operation, result)
+                logger.debug("Operation %s completed", operation)
                 return result
-        logger.error("Unregistered operation for ticket=%s", ticket)
+        logger.error("Unregistered operation for ticket type=%s", ticket.type)
         raise ServiceNotRegisteredException(f"Unregistered/Unsubscribed operation.\n There is no operation set for {ticket.type}")
 
     async def dispatch(self, ticket: CadenceTicket):
         '''
         Dispatch a mail
         '''
-        logger.debug("dispatch called for ticket=%s", ticket)
+        logger.debug("dispatch called for ticket id=%s", ticket.id)
         if self.grand_registry.cadence is not None:
-            logger.debug("Calling cadence service for ticket=%s", ticket)
+            logger.debug("Calling cadence service for ticket id=%s", ticket.id)
             self.grand_registry.cadence(ticket.payload)
             return
         logger.error("No cadence/email service registered")
