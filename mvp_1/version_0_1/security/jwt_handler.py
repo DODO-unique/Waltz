@@ -8,6 +8,7 @@ from version_0_1.exceptions.waltz_exceptions import JWTKeyMissingException
 from version_0_1.log.logger import get_logger
 from version_0_1.validators.core_validator import (
     JWKSchema,
+    JWKSetSchema,
     JWKVerificationRequest,
     ProviderName,
 )
@@ -74,17 +75,24 @@ async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema |
 
 async def process_id_token(payload: JWKVerificationRequest):
     logger.debug("process_id_token called for provider=%s", payload.provider)
-    jwkschema = await _get_key(payload.provider)
+
+    header = jwt.get_unverified_header(payload.id_token)
+    kid = header["kid"]
+
+    jwkschema = await _get_key(payload.provider, token_header_kid=kid)
+
     if jwkschema is None:
         logger.error("No jwk schema returned for provider=%s", payload.provider)
         raise JWTKeyMissingException("NO key returned")
+    
     key = PyJWK(jwkschema.model_dump())
+
     try:
         verified_claims = jwt.decode(
             jwt=payload.id_token,
             key=key,
             audience=payload.client_id,
-            issuer=jwkschema.iss,
+            issuer=OIDC_CONFIG[payload.provider]["iss"],
             algorithms=jwkschema.alg
         )
     except Exception:
