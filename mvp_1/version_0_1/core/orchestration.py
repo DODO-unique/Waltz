@@ -303,6 +303,9 @@ class Orchestra:
                 status="success"
             )
         await destroy(payload.token)
+        return WaltzResult(
+            status="success"
+        )
 
     async def initiate_email_validation(self, identity: IdentityPayload):
         mail = identity.email
