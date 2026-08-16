@@ -18,22 +18,25 @@ logger.debug("security.jwt_handler module loaded")
 
 
 @dataclass
-class CachedJWKS:
-    '''
-    jwks: {providerName: {kid: jwkschema}}
-    '''
-    jwks: dict[str, JWKSchema]
-    expires_at: float = 0
+class CachedJWK:
+    jwk: JWKSchema
+    expiry: float = time.time() + (5*60)
 
-    def add_jwk(self, kid: str, key: JWKSchema):
-        self.jwks[kid] = key
+jwk_cache: dict[str, CachedJWK] = {}
 
-jwk_cache: dict[ProviderName, CachedJWKS] = {}
-
-PROVIDER_URLS = {
-    "google" : "https://www.googleapis.com/oauth2/v3/certs",
-    "microsoft" : "https://login.microsoftonline.com/common/discovery/v2.0/keys",
-    "linkedin" : "https://www.linkedin.com/oauth/openid/jwks"
+OIDC_CONFIG = {
+    "google": {
+        "iss": "https://accounts.google.com",
+        "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
+    },
+    "microsoft": {
+        "iss": "https://login.microsoftonline.com/common/v2.0",
+        "jwks_uri": "https://login.microsoftonline.com/common/discovery/v2.0/keys",
+    },
+    "linkedin": {
+        "iss": "https://www.linkedin.com/oauth",
+        "jwks_uri": "https://www.linkedin.com/oauth/openid/jwks",
+    },
 }
 
 async def _get_key(provider: ProviderName):
