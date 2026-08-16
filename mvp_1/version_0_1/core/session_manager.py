@@ -111,7 +111,7 @@ async def check_token(token: UUID) -> bool:
     It is not to be used internally to check tokens.
     '''
     logger.debug("check_token called for token=%s", token)
-    predicate = True
+    predicate = False
     result = await publish_ticket(
         TicketType(
             id=uuid4(),
@@ -127,6 +127,8 @@ async def check_token(token: UUID) -> bool:
         logger.debug("session for token=%f expired. Attempting destruction")
         await destroy(token)
         predicate = False
+    if isinstance(response.token, UUID):
+        predicate = True
 
     logger.debug("check_token result=%s for token=%s", predicate, token)
     return predicate
