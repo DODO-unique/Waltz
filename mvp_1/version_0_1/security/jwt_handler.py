@@ -44,7 +44,10 @@ async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema |
     logger.debug("_get_key called for provider=%s", provider)
 
     if token_header_kid in jwk_cache:
-        return jwk_cache[token_header_kid].jwk
+        formal_key = jwk_cache[token_header_kid].jwk
+        if jwk_cache[token_header_kid].expiry < time.time():
+            del jwk_cache[token_header_kid]
+        return formal_key
 
 
     async with httpx.AsyncClient() as client:
@@ -70,6 +73,8 @@ async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema |
                 continue
             # check if expired
             if jwk_cache[kid].expiry < time.time():
+                """if event reached here, the kid is in jwk_cache but is not token_header_kid."""
+
                 # if expired, delete entry
                 logger.debug("Expired kid in cache. Destorying entry")
                 del jwk_cache[kid]
