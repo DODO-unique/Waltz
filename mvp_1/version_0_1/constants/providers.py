@@ -42,6 +42,8 @@ class DiscordClaimSchema(ClaimSchema):
         logger.debug("transform_avatar_hash_to_url called for v=%s", v)
         if isinstance(v, str) and v.startswith("http"):
             return v
+        if v is None:
+            return v
         data = info.data if hasattr(info, "data") else {}
         user_id = data.get("id")
         ext = "gif" if v.startswith("a_") else "png"
