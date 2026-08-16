@@ -230,7 +230,7 @@ class ResourceResponsePayload(BaseModel):
 class SessionRequest(BaseModel):
     Uid: Uid | None = None
     token: UUID = Field(default_factory=uuid4)
-    expiry: float = time.time() + 3600
+    expiry: float = Field(default_factory=lambda: time.time() + 3600)
 
 class SessionResponse(BaseModel):
     token: UUID | None = None
