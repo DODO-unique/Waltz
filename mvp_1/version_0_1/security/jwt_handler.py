@@ -65,18 +65,15 @@ async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema |
         # updating the cache
         for kid, key in kid_key_dict.items():
             """If control comes here, then token_header_kid is definitely not in jwk_cache"""
-
             if kid not in jwk_cache:
                 # if kid is not in jwk_cache, add it
                 # add kid-key pair to cache. Five minute time default
                 jwk_cache[kid] = CachedJWK(jwk=key, expiry=time.time() + (5*60))
                 continue
-            # check if expired
-            if jwk_cache[kid].expiry < time.time():
-                """if event reached here, the kid is in jwk_cache but is not token_header_kid."""
 
-                # if expired, delete entry
-                logger.debug("Expired kid in cache. Destorying entry")
+        # a dry scan to check expiry
+        for kid, jwk in jwk_cache.items():
+            if jwk.expiry < time.time():
                 del jwk_cache[kid]
         
         return formal_key
