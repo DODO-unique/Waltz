@@ -48,7 +48,7 @@ async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema |
 
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(OIDC_CONFIG[provider]["jwk_uri"])
+        response = await client.get(OIDC_CONFIG[provider]["jwks_uri"])
         formal_key: JWKSchema | None = None
 
         keys = response.json()
