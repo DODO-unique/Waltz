@@ -292,6 +292,12 @@ class JWKSchema(BaseModel):
     e: str  
     model_config = ConfigDict(extra="allow")
 
+class JWKSetSchema(BaseModel):
+    keys: list[JWKSchema]
+
+    def lookup_dict(self) -> dict[str, JWKSchema]:
+        return {key.kid: key for key in self.keys}
+
 class JWKVerificationRequest(BaseModel):
     provider: ProviderName
     id_token: str
