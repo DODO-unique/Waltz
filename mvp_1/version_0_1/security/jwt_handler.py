@@ -39,31 +39,38 @@ OIDC_CONFIG = {
     },
 }
 
-async def _get_key(provider: ProviderName):
+async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema | None:
     logger.debug("_get_key called for provider=%s", provider)
-    if provider not in jwk_cache:
-        jwk_cache[provider] = CachedJWKS({})
-    if jwk_cache[provider].expires_at > time.time():
-        # expired
-        logger.info("JWK cache expired for provider=%s, resetting cache", provider)
-        jwk_cache[provider] = CachedJWKS({}) # strong anti-pattern vibes here
+
+    if token_header_kid in jwk_cache:
+        return jwk_cache[token_header_kid].jwk
+
+
     async with httpx.AsyncClient() as client:
-        response = await client.get(PROVIDER_URLS[provider])
+        response = await client.get(OIDC_CONFIG[provider]["jwk_uri"])
+        formal_key: JWKSchema | None = None
 
         keys = response.json()
+        # keys is a package of keys.
+        keys = JWKSetSchema.model_validate(keys)
+        kid_key_dict = keys.lookup_dict()
 
+        if token_header_kid in kid_key_dict:
+            formal_key = kid_key_dict[token_header_kid]
+            
+        # updating the cache
+        for kid, key in kid_key_dict.items():
+            """If control comes here, then kid is definitely not in jwk_cache"""
 
-        for key in keys["keys"]:
-            key = JWKSchema.model_validate(key)
-            if key.kid in jwk_cache[provider].jwks:
-                logger.debug("Found existing jwk for kid=%s", key.kid)
-                return jwk_cache[provider].jwks[key.kid]
-            else:
-                if provider not in jwk_cache:
-                    jwk_cache[provider].expires_at = time.time() + 3600
-                jwk_cache[provider].add_jwk(kid=key.kid, key=key)
-                logger.debug("Added jwk for kid=%s", key.kid)
-                return key
+            # check if expired
+            if jwk_cache[kid].expiry < time.time():
+                # if expired, delete entry
+                logger.debug("Expired kid in cache. Destorying entry")
+                del jwk_cache[kid]
+            # add kid-key pair to cache. Five minute time default
+            jwk_cache[kid] = CachedJWK(jwk=key)
+        
+        return formal_key
 
 async def process_id_token(payload: JWKVerificationRequest):
     logger.debug("process_id_token called for provider=%s", payload.provider)
