@@ -8,7 +8,7 @@ from version_0_1.log.logger import get_logger
 logger = get_logger("core.idenity_service")
 
 logger.debug("core.idenity_service module loaded")
-from general import get_id, publish_ticket
+from version_0_1.core.general import get_id, publish_ticket
 from version_0_1.security.hashing import compare_password
 from version_0_1.validators.core_validator import (
     IdentityPayload,

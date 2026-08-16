@@ -13,13 +13,20 @@ from version_0_1.log.logger import get_logger
 logger = get_logger("validators.core_validator")
 
 logger.debug("validators.core_validator module loaded")
-from validation_helper import Addresses, Mail, Password, ProviderName, Uid, UserName
 from version_0_1.constants.providers import (
     DiscordClaimSchema,
     GitHubClaimSchema,
     OAuthProviders,
 )
 from version_0_1.core.enums import OperationIntentions
+from version_0_1.validators.validation_helper import (
+    Addresses,
+    Mail,
+    Password,
+    ProviderName,
+    Uid,
+    UserName,
+)
 
 # ---------------- Cadence Schemas
 

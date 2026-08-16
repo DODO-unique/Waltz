@@ -6,9 +6,9 @@ logger = get_logger("validators.endpoint_validators")
 
 logger.debug("validators.endpoint_validators module loaded")
 
-from core_validator import UUID, IdentityPayload
 from pydantic import BaseModel
-from validation_helper import Mail, Password, UserName
+from version_0_1.validators.core_validator import UUID, IdentityPayload
+from version_0_1.validators.validation_helper import Mail, Password, UserName
 
 
 class LocalAuthPayload(BaseModel):
