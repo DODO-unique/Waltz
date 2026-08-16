@@ -1,15 +1,12 @@
-from dataclasses import dataclass
-
 from version_0_1.log.logger import get_logger
 
 logger = get_logger("core.enums")
 
 logger.debug("core.enums module loaded")
 from enum import Enum
-from types import UnionType
-from typing import Generic, TypeVar
 from uuid import UUID
 
+from version_0_1.core.enums_bridge import OperationIntentions
 from version_0_1.validators.core_validator import (
     FetchOTP,
     IdentityPayload,
@@ -44,13 +41,6 @@ class Operation:
         GET = 'get'
         DELETE = 'delete'
 
-P = TypeVar("P")
-R = TypeVar("R")
-
-@dataclass(frozen=True)
-class OperationIntentions(Generic[P, R]):
-    operation: Enum
-    payload: type[P] | UnionType
 
 
 class User:

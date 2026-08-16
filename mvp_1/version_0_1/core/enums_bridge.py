@@ -1,3 +1,12 @@
-from version_0_1.core.enums import OperationIntentions
+from dataclasses import dataclass
+from enum import Enum
+from types import UnionType
+from typing import Generic, TypeVar
 
-__all__ = ["OperationIntentions"]
+P = TypeVar("P")
+R = TypeVar("R")
+
+@dataclass(frozen=True)
+class OperationIntentions(Generic[P, R]):
+    operation: Enum
+    payload: type[P] | UnionType
