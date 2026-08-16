@@ -40,7 +40,7 @@ async def get_token(uid: Uid) -> UUID | None:
         TicketType(
             type = Session.GetToken,
             payload = SessionRequest(
-                Uid=uid
+                uid=uid
             )
         )
     )
@@ -84,7 +84,7 @@ async def start(identity: IdentityPayload | None = None, uid: Uid | None = None)
         TicketType(
             type=Session.Create,
             payload=SessionRequest(
-                Uid=uid
+                uid=uid
             )
         )
     )
@@ -162,7 +162,7 @@ async def destroy_all(identiy: IdentityPayload):
     await publish_ticket(
         TicketType(
             type= Session.DeleteAll,
-            payload=SessionRequest(Uid=uid)
+            payload=SessionRequest(uid=uid)
         )
     )
     logger.info("destroy_all completed for uid=%s", uid)
