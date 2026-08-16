@@ -264,9 +264,13 @@ class DatabaseRegistry(BaseModel):
     operation: OperationIntentions[Any, Any]
     operator: Callable[[Any], Any]
 
+    model_config = {"frozen" : True}
+
 class Credentials(OAuthCredentials):
     redirect_uri : AnyHttpUrl
     provider : ProviderName
+
+    model_config = {"frozen" : True}
 
 class Registry(SDKSchemas):
     database : set[DatabaseRegistry] = set()
