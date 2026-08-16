@@ -21,7 +21,7 @@ logger.debug("security.jwt_handler module loaded")
 @dataclass
 class CachedJWK:
     jwk: JWKSchema
-    expiry: float = time.time() + (5*60)
+    expiry: float
 
 jwk_cache: dict[str, CachedJWK] = {}
 
@@ -61,15 +61,18 @@ async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema |
             
         # updating the cache
         for kid, key in kid_key_dict.items():
-            """If control comes here, then kid is definitely not in jwk_cache"""
+            """If control comes here, then token_header_kid is definitely not in jwk_cache"""
 
+            if kid not in jwk_cache:
+                # if kid is not in jwk_cache, add it
+                # add kid-key pair to cache. Five minute time default
+                jwk_cache[kid] = CachedJWK(jwk=key, expiry=time.time() + (5*60))
+                continue
             # check if expired
             if jwk_cache[kid].expiry < time.time():
                 # if expired, delete entry
                 logger.debug("Expired kid in cache. Destorying entry")
                 del jwk_cache[kid]
-            # add kid-key pair to cache. Five minute time default
-            jwk_cache[kid] = CachedJWK(jwk=key)
         
         return formal_key
 
