@@ -279,10 +279,15 @@ class TicketType(BaseModel):
 # ------------------- JWT
 
 class JWKSchema(BaseModel):
+    # Standard required firlds. Key ID and key type (RSA, etc)
     kid: str
     kty: str
-    alg: str
-    iss: str
+
+    # optional good-to-haves
+    alg: str | None
+    use: str | None
+
+    # basic RSA schemas
     n: str
     e: str  
     model_config = ConfigDict(extra="allow")
