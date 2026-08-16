@@ -236,6 +236,12 @@ class OTPExpiredException(WaltzException):
     default_code = "OTP_EXPIRED"
     default_severity = "high"
 
+class InvalidProviderNameUsed(WaltzException):
+    """Provider name used is not applicable in the relevant field"""
+
+    default_code = "INVALID_PROVIDER"
+    default_severity = "high"
+
 __all__ = [
     "AuthenticationException",
     "CSRFValidationException",
@@ -246,6 +252,7 @@ __all__ = [
     "EmailValidationException",
     "InternalException",
     "InvalidInternalStateException",
+    "InvalidProviderNameUsed",
     "JWTKeyMissingException",
     "MissingConfigurationException",
     "OAuthNetworkException",
