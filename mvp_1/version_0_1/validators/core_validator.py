@@ -18,7 +18,7 @@ from version_0_1.constants.providers import (
     GitHubClaimSchema,
     OAuthProviders,
 )
-from version_0_1.core.enums import OperationIntentions
+from version_0_1.core.enums_bridge import OperationIntentions
 from version_0_1.validators.validation_helper import (
     Addresses,
     Mail,
