@@ -73,7 +73,7 @@ class StoreOTP(BaseModel):
     '''
     digest: str
     uid: Uid
-    expiry: float = time.time() + 600
+    expiry: float = Field(default_factory=lambda: time.time() + 600)
 
 class FetchOTP(BaseModel):
     '''
