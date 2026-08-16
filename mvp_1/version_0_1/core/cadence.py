@@ -99,7 +99,7 @@ class Cadence:
         6. Return success/failure.
         '''
 
-        logger.debug("Cadence.validate called email=%s code=%s", self.email, code)
+        logger.debug("Cadence.validate called email=%s", self.email)
         uid = await get_id(IdentityPayload(email=self.email))
         if uid is None:
             logger.error("Cadence.validate: No user found for email=%s", self.email)
