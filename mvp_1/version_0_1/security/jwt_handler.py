@@ -4,7 +4,10 @@ from dataclasses import dataclass
 import httpx
 import jwt
 from jwt import PyJWK
-from version_0_1.exceptions.waltz_exceptions import JWTKeyMissingException
+from version_0_1.exceptions.waltz_exceptions import (
+    InvalidProviderNameUsed,
+    JWTKeyMissingException,
+)
 from version_0_1.log.logger import get_logger
 from version_0_1.validators.core_validator import (
     JWKSchema,
@@ -23,7 +26,7 @@ class CachedJWK:
     jwk: JWKSchema
     expiry: float
 
-jwk_cache: dict[str, CachedJWK] = {}
+cache: dict[ProviderName, dict[str, CachedJWK]] = {}
 
 OIDC_CONFIG = {
     "google": {
@@ -42,6 +45,15 @@ OIDC_CONFIG = {
 
 async def _get_key(provider: ProviderName, token_header_kid: str) -> JWKSchema | None:
     logger.debug("_get_key called for provider=%s", provider)
+
+    if provider not in cache:
+        if provider in OIDC_CONFIG:
+            # valid OIDC provider name
+            cache[provider] = {}
+        else:
+            raise InvalidProviderNameUsed(f"Provider {provider} is not available")
+
+    jwk_cache = cache[provider]
 
     if token_header_kid in jwk_cache:
         formal_key = jwk_cache[token_header_kid].jwk
