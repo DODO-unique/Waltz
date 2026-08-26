@@ -49,7 +49,7 @@ def send_verification_email(message):
     ...
 
 bus.subscribe(listeners)
-
+```
 The operation contracts currently cover:
 
 | Category | Operations |
