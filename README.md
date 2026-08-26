@@ -8,9 +8,7 @@ Its core separates authentication orchestration from integrations. Your applicat
 
 ## Philosophy
 
-<!-- LOGO: Add the Waltz logo here. -->
-
-<!-- ![Waltz logo](path-or-url-to-logo) -->
+![Waltz-logo](/asset/Waltz.png)
 
 - **Transparency:** integrations are explicit. Your application owns storage, sessions, OTP persistence, and email delivery.
 - **Concrete user APIs:** typed payloads and operation contracts make the data crossing the framework boundary visible.
