@@ -2,21 +2,21 @@ import time
 from uuid import UUID, uuid4
 
 from pydantic import ValidationError
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.exceptions.waltz_exceptions import (
     InvalidInternalStateException,
     SessionException,
     SessionTokenNotFoundException,
     UserNotFoundException,
 )
-from version_0_1.log.logger import get_logger
+from mvp_1.log.logger import get_logger
 
 logger = get_logger("core.session_manager")
 
 logger.debug("core.session_manager module loaded")
 
-from version_0_1.core.enums import Session
-from version_0_1.core.general import get_id, publish_ticket
-from version_0_1.validators.core_validator import (
+from mvp_1.core.enums import Session
+from mvp_1.core.general import get_id, publish_ticket
+from mvp_1.validators.core_validator import (
     IdentityPayload,
     SessionRequest,
     SessionResponse,

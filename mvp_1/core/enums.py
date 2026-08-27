@@ -1,4 +1,4 @@
-from version_0_1.log.logger import get_logger
+from mvp_1.log.logger import get_logger
 
 logger = get_logger("core.enums")
 
@@ -6,8 +6,8 @@ logger.debug("core.enums module loaded")
 from enum import Enum
 from uuid import UUID
 
-from version_0_1.core.enums_bridge import OperationIntentions
-from version_0_1.validators.core_validator import (
+from mvp_1.core.enums_bridge import OperationIntentions
+from mvp_1.validators.core_validator import (
     FetchOTP,
     IdentityPayload,
     LocalAuthRegistrationPayload,

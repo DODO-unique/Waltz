@@ -1,12 +1,12 @@
 from collections.abc import Callable
 from typing import Any, TypeAlias
 
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.exceptions.waltz_exceptions import (
     CredentialsNotFoundException,
     DuplicateRegistrationException,
     ServiceNotRegisteredException,
 )
-from version_0_1.log.logger import get_logger
+from mvp_1.log.logger import get_logger
 
 from .listeners import Listeners
 
@@ -14,7 +14,7 @@ logger = get_logger("sdk.ticket_handler")
 
 logger.debug("sdk.ticket_handler module loaded")
 
-from version_0_1.validators.core_validator import (
+from mvp_1.validators.core_validator import (
     CadenceTicket,
     Credentials,
     CredentialsTicket,

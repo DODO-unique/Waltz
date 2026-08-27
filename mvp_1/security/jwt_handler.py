@@ -4,12 +4,12 @@ from dataclasses import dataclass
 import httpx
 import jwt
 from jwt import PyJWK
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.exceptions.waltz_exceptions import (
     InvalidProviderNameUsed,
     JWTKeyMissingException,
 )
-from version_0_1.log.logger import get_logger
-from version_0_1.validators.core_validator import (
+from mvp_1.log.logger import get_logger
+from mvp_1.validators.core_validator import (
     JWKSchema,
     JWKSetSchema,
     JWKVerificationRequest,

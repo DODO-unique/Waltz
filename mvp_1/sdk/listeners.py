@@ -1,18 +1,18 @@
 from collections.abc import Awaitable, Callable
 from typing import TypeVar, get_args
 
-from version_0_1.core.enums import OperationIntentions
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.core.enums import OperationIntentions
+from mvp_1.exceptions.waltz_exceptions import (
     DuplicateRegistrationException,
     MissingConfigurationException,
     UnsupportedProviderException,
 )
-from version_0_1.log.logger import get_logger
+from mvp_1.log.logger import get_logger
 
 logger = get_logger("sdk.listeners")
 
 logger.debug("sdk.listeners module loaded")
-from version_0_1.validators.core_validator import (
+from mvp_1.validators.core_validator import (
     AnyHttpUrl,
     CadencePayload,
     DatabaseRegistry,

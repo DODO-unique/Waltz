@@ -1,16 +1,16 @@
-from version_0_1.core.enums import AuthResultEnum, Enum, User
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.core.enums import AuthResultEnum, Enum, User
+from mvp_1.exceptions.waltz_exceptions import (
     DataIntegrityException,
     UserNotFoundException,
 )
-from version_0_1.log.logger import get_logger
+from mvp_1.log.logger import get_logger
 
 logger = get_logger("core.idenity_service")
 
 logger.debug("core.idenity_service module loaded")
-from version_0_1.core.general import get_id, publish_ticket
-from version_0_1.security.hashing import compare_password
-from version_0_1.validators.core_validator import (
+from mvp_1.core.general import get_id, publish_ticket
+from mvp_1.security.hashing import compare_password
+from mvp_1.validators.core_validator import (
     IdentityPayload,
     LocalAuthRegistrationPayload,
     Mail,
@@ -20,7 +20,7 @@ from version_0_1.validators.core_validator import (
     Uid,
     UserName,
 )
-from version_0_1.validators.endpoint_validators import LocalAuthPayload
+from mvp_1.validators.endpoint_validators import LocalAuthPayload
 
 
 class IdentityService:

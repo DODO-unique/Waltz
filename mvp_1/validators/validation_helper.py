@@ -9,7 +9,7 @@ from pydantic import (
     SecretStr,
     StringConstraints,
 )
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.exceptions.waltz_exceptions import (
     EmailValidationException,
     PasswordValidationException,
     UsernameValidationException,

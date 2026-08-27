@@ -2,31 +2,31 @@ from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID, uuid4
 
-from version_0_1.core.cadence import Cadence
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.core.cadence import Cadence
+from mvp_1.exceptions.waltz_exceptions import (
     OIDCTokenInvalidException,
     SessionTokenNotFoundException,
     TypeMismatchException,
     UnsupportedProviderException,
     UserNotFoundException,
 )
-from version_0_1.log.logger import get_logger
+from mvp_1.log.logger import get_logger
 
 logger = get_logger("core.orchestration")
 
 logger.debug("core.orchestration module loaded")
-from version_0_1.constants.providers import DiscordClaimSchema, GitHubClaimSchema
-from version_0_1.core.idenity_service import IdentityService, get_id
-from version_0_1.core.serenity import Serenity
-from version_0_1.core.session_manager import (
+from mvp_1.constants.providers import DiscordClaimSchema, GitHubClaimSchema
+from mvp_1.core.idenity_service import IdentityService, get_id
+from mvp_1.core.serenity import Serenity
+from mvp_1.core.session_manager import (
     check_session,
     destroy,
     destroy_all,
     fetch_token,
     start,
 )
-from version_0_1.security.jwt_handler import process_id_token
-from version_0_1.validators.core_validator import (
+from mvp_1.security.jwt_handler import process_id_token
+from mvp_1.validators.core_validator import (
     AuthorizationResponse,
     IdentityPayload,
     JWKVerificationRequest,
@@ -39,7 +39,7 @@ from version_0_1.validators.core_validator import (
     Uid,
     UserName,
 )
-from version_0_1.validators.endpoint_validators import (
+from mvp_1.validators.endpoint_validators import (
     LocalAuthPayload,
     LogOutPayload,
     ValidationPayload,

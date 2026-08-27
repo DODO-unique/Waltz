@@ -7,19 +7,19 @@ from typing import Any, Literal
 from uuid import UUID, uuid4
 
 from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, model_validator
-from version_0_1.exceptions.waltz_exceptions import RequiredFieldMissingException
-from version_0_1.log.logger import get_logger
+from mvp_1.exceptions.waltz_exceptions import RequiredFieldMissingException
+from mvp_1.log.logger import get_logger
 
 logger = get_logger("validators.core_validator")
 
 logger.debug("validators.core_validator module loaded")
-from version_0_1.constants.providers import (
+from mvp_1.constants.providers import (
     DiscordClaimSchema,
     GitHubClaimSchema,
     OAuthProviders,
 )
-from version_0_1.core.enums_bridge import OperationIntentions
-from version_0_1.validators.validation_helper import (
+from mvp_1.core.enums_bridge import OperationIntentions
+from mvp_1.validators.validation_helper import (
     Addresses,
     Mail,
     Password,

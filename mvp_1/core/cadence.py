@@ -1,6 +1,6 @@
 from secrets import randbelow
 
-from version_0_1.log.logger import get_logger
+from mvp_1.log.logger import get_logger
 
 logger = get_logger("core.cadence")
 
@@ -8,14 +8,14 @@ logger.debug("core.cadence module loaded")
 import time
 from uuid import uuid4
 
-from version_0_1.core.enums import OneTimePassword
-from version_0_1.core.general import dispatch_ticket, get_id, publish_ticket
-from version_0_1.exceptions.waltz_exceptions import (
+from mvp_1.core.enums import OneTimePassword
+from mvp_1.core.general import dispatch_ticket, get_id, publish_ticket
+from mvp_1.exceptions.waltz_exceptions import (
     OTPExpiredException,
     UserNotFoundException,
 )
-from version_0_1.security.hashing import sha_hash
-from version_0_1.validators.core_validator import (
+from mvp_1.security.hashing import sha_hash
+from mvp_1.validators.core_validator import (
     CadencePayload,
     CadenceTicket,
     FetchOTP,
