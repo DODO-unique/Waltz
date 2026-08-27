@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import httpx
 import jwt
 from jwt import PyJWK
+
 from mvp_1.exceptions.waltz_exceptions import (
     InvalidProviderNameUsed,
     JWTKeyMissingException,
@@ -118,4 +119,3 @@ async def process_id_token(payload: JWKVerificationRequest):
 
     logger.debug("Successfully verified id_token for provider=%s", payload.provider)
     return verified_claims
-            

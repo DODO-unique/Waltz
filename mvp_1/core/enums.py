@@ -1,12 +1,8 @@
-from mvp_1.log.logger import get_logger
-
-logger = get_logger("core.enums")
-
-logger.debug("core.enums module loaded")
 from enum import Enum
 from uuid import UUID
 
 from mvp_1.core.enums_bridge import OperationIntentions
+from mvp_1.log.logger import get_logger
 from mvp_1.validators.core_validator import (
     FetchOTP,
     IdentityPayload,
@@ -18,6 +14,11 @@ from mvp_1.validators.core_validator import (
     StoreOTP,
     Uid,
 )
+
+logger = get_logger("core.enums")
+
+logger.debug("core.enums module loaded")
+
 
 
 class Operation:

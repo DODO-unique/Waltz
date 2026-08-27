@@ -1,11 +1,7 @@
 from fastapi import APIRouter
-from mvp_1.log.logger import get_logger
-
-logger = get_logger("api.endpoints")
-
-logger.debug("api.endpoints module loaded")
 
 from mvp_1.core.orchestration import Orchestra
+from mvp_1.log.logger import get_logger
 from mvp_1.validators.core_validator import (
     AuthorizationResponse,
     IdentityPayload,
@@ -19,6 +15,11 @@ from mvp_1.validators.endpoint_validators import (
     ValidationPayload,
     WaltzResult,
 )
+
+logger = get_logger("api.endpoints")
+
+logger.debug("api.endpoints module loaded")
+
 
 
 def routes(prefix: str):

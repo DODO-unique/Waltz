@@ -2,17 +2,7 @@ import secrets
 from uuid import uuid4
 
 import httpx
-from mvp_1.exceptions.waltz_exceptions import (
-    OAuthNetworkException,
-    OAuthProviderException,
-    OAuthStateValidationException,
-    UnsupportedProviderException,
-)
-from mvp_1.log.logger import get_logger
 
-logger = get_logger("core.serenity")
-
-logger.debug("core.serenity module loaded")
 from mvp_1.constants.providers import (
     DiscordSchema,
     GitHubSchema,
@@ -20,6 +10,13 @@ from mvp_1.constants.providers import (
 )
 from mvp_1.core.enums import ProviderCategory
 from mvp_1.core.general import bus
+from mvp_1.exceptions.waltz_exceptions import (
+    OAuthNetworkException,
+    OAuthProviderException,
+    OAuthStateValidationException,
+    UnsupportedProviderException,
+)
+from mvp_1.log.logger import get_logger
 from mvp_1.validators.core_validator import (
     AnyHttpUrl,
     AuthorizationRequest,
@@ -34,6 +31,10 @@ from mvp_1.validators.core_validator import (
     TokenResponse,
     TradeResponse,
 )
+
+logger = get_logger("core.serenity")
+
+logger.debug("core.serenity module loaded")
 
 
 class InMemoryStateStore:

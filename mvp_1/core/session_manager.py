@@ -2,6 +2,9 @@ import time
 from uuid import UUID, uuid4
 
 from pydantic import ValidationError
+
+from mvp_1.core.enums import Session
+from mvp_1.core.general import get_id, publish_ticket
 from mvp_1.exceptions.waltz_exceptions import (
     InvalidInternalStateException,
     SessionException,
@@ -9,13 +12,6 @@ from mvp_1.exceptions.waltz_exceptions import (
     UserNotFoundException,
 )
 from mvp_1.log.logger import get_logger
-
-logger = get_logger("core.session_manager")
-
-logger.debug("core.session_manager module loaded")
-
-from mvp_1.core.enums import Session
-from mvp_1.core.general import get_id, publish_ticket
 from mvp_1.validators.core_validator import (
     IdentityPayload,
     SessionRequest,
@@ -23,6 +19,11 @@ from mvp_1.validators.core_validator import (
     TicketType,
     Uid,
 )
+
+logger = get_logger("core.session_manager")
+
+logger.debug("core.session_manager module loaded")
+
 
 # NOTE: MAJOR - I made them independent functions instead of a session class whcih was unnecessary
 '''

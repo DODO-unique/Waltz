@@ -1,14 +1,15 @@
 from typing import Any, Literal
 
+from pydantic import BaseModel
+
 from mvp_1.log.logger import get_logger
+from mvp_1.validators.core_validator import UUID, IdentityPayload
+from mvp_1.validators.validation_helper import Mail, Password, UserName
 
 logger = get_logger("validators.endpoint_validators")
 
 logger.debug("validators.endpoint_validators module loaded")
 
-from pydantic import BaseModel
-from mvp_1.validators.core_validator import UUID, IdentityPayload
-from mvp_1.validators.validation_helper import Mail, Password, UserName
 
 
 class LocalAuthPayload(BaseModel):

@@ -7,13 +7,6 @@ from mvp_1.exceptions.waltz_exceptions import (
     ServiceNotRegisteredException,
 )
 from mvp_1.log.logger import get_logger
-
-from .listeners import Listeners
-
-logger = get_logger("sdk.ticket_handler")
-
-logger.debug("sdk.ticket_handler module loaded")
-
 from mvp_1.validators.core_validator import (
     CadenceTicket,
     Credentials,
@@ -21,6 +14,13 @@ from mvp_1.validators.core_validator import (
     GrandRegistry,
     TicketType,
 )
+
+from .listeners import Listeners
+
+logger = get_logger("sdk.ticket_handler")
+
+logger.debug("sdk.ticket_handler module loaded")
+
 
 Listener: TypeAlias = Callable[[TicketType], Any]
 

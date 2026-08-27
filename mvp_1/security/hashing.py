@@ -1,6 +1,7 @@
 import hashlib
 
 import bcrypt
+
 from mvp_1.log.logger import get_logger
 
 logger = get_logger("security.hashing")
