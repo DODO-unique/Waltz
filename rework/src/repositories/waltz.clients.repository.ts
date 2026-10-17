@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma';
 import {ContractSchema, CreateClient, CreateClientSchema, SecuritySchema} from '../modules/validators/waltz.ops.validators';
 import { persistenceResult } from '../types/waltz.types';
-import { error, log, success } from '../util/chalk_colors';
+import { error, success } from '../util/chalk_colors';
 import { addSecurity } from './waltz.security.repository';
 import { addContract } from './waltz.contract.respository';
 

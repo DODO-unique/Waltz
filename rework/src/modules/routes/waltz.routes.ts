@@ -1,8 +1,8 @@
-import { typeValidator } from "../middleware/validation.middleware";
 import Express, { Router } from 'express';
-import { operationalRequestSchema } from "../validators/operations.validators";
-import { error, success } from "../../util/chalk_colors";
 import { addClient } from "../../repositories/waltz.clients.repository";
+import { error } from '../../util/chalk_colors';
+import { typeValidator } from '../middleware/validation.middleware';
+import { CreateClientSchema } from '../validators/waltz.ops.validators';
 
 const route = Router()
 
@@ -10,7 +10,7 @@ route.get("/api", (req, res) => {
     res.send("Got you!")
 })
 
-route.post("/api/addUser", Express.json(), async (req, res) => {
+route.post("/api/addUser", Express.json(), typeValidator(CreateClientSchema), async (req, res) => {
 
     const result = await addClient(req.body)
 

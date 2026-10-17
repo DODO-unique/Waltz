@@ -1,7 +1,7 @@
 import {prisma} from '../lib/prisma';
 import { ContractPacket } from '../modules/validators/waltz.ops.validators';
 import { persistenceResult } from '../types/waltz.types';
-import { success, error } from '../util/chalk_colors';
+import { success } from '../util/chalk_colors';
 
 export async function addContract(payload: ContractPacket) : Promise<persistenceResult> {
         console.dir(payload, { depth: null });

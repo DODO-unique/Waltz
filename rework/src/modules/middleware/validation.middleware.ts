@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import { middlewareArgs } from "../../types/middleware.types";
 import { z } from 'zod';
 import {error} from '../../util/chalk_colors'
 
