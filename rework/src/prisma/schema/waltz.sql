@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS clients (
 
 CREATE TABLE IF NOT EXISTS security (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL UNIQUE REFERENCES clients(id),
+    client_id UUID NOT NULL UNIQUE REFERENCES clients(id),
     client_secret TEXT NOT NULL,
     password_hash TEXT NOT NULL
 );
