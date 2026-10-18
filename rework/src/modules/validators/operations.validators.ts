@@ -10,7 +10,7 @@ export type ContractIdentityPayload = z.infer<typeof ContractIdentityPayloadSche
 export const operationalRequestSchema = z.object({
     ID: ContractIdentityPayloadSchema,
     reqType: z.literal(["register", "auth"]),
-    reqBody: z.object().optional()
+    reqBody: z.record(z.string(), z.unknown())
 })
 
 export type operationalRequestType = z.infer<typeof operationalRequestSchema>
