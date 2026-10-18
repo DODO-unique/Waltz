@@ -1,9 +1,9 @@
-import { prisma } from '../lib/prisma';
-import {ContractSchema, CreateClient, CreateClientSchema, SecuritySchema} from '../modules/validators/waltz.ops.validators';
-import { persistenceResult } from '../types/waltz.types';
-import { error, success } from '../util/chalk_colors';
-import { addSecurity } from './waltz.security.repository';
-import { addContract } from './waltz.contract.respository';
+import { prisma } from '../lib/prisma.js';
+import {ContractSchema, CreateClient, CreateClientSchema, SecuritySchema} from '../modules/validators/waltz.ops.validators.js';
+import { persistenceResult } from '../types/waltz.types.js';
+import { error, success } from '../util/chalk_colors.js';
+import { addSecurity } from './waltz.security.repository.js';
+import { addContract } from './waltz.contract.respository.js';
 
 export async function addClient(payload: CreateClient) : Promise<persistenceResult> {
     // CHeck if payload is valid:

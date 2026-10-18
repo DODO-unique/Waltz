@@ -1,7 +1,7 @@
-import {prisma} from '../lib/prisma';
-import { type Security } from '../modules/validators/waltz.ops.validators';
-import { persistenceResult } from '../types/waltz.types';
-import { success } from '../util/chalk_colors';
+import {prisma} from '../lib/prisma.js';
+import { type Security } from '../modules/validators/waltz.ops.validators.js';
+import { persistenceResult } from '../types/waltz.types.js';
+import { success } from '../util/chalk_colors.js';
 
 export async function addSecurity(payload: Security) : Promise<persistenceResult> {
     

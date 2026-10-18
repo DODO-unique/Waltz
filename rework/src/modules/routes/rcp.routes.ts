@@ -1,10 +1,12 @@
 import { Router } from "express";
-import typeValidator from "../middleware/validation.middleware";
-import { operationalRequestSchema, operationalRequestType } from "../validators/operations.validators";
-import { autethenticator } from "../middleware/authention.middleware";
-import { error, success } from "../../util/chalk_colors";
-import { getClientContract } from "../../repositories/operational.repository";
-import { genAuthSchema } from "../validators/ops.generate.validator";
+import typeValidator from "../middleware/validation.middleware.js";
+import { operationalRequestSchema, operationalRequestType } from "../validators/operations.validators.js";
+import { autethenticator } from "../middleware/authention.middleware.js";
+import { error, success } from "../../util/chalk_colors.js";
+import { getClientContract } from "../../repositories/operational.repository.js";
+import { genAuthSchema } from "../validators/ops.generate.validator.js";
+import { log } from "../../util/chalk_colors.js";
+import { redisCheck, redisEntry } from "../../repositories/redis/ops.transactions.js";
 
 
 const route = Router();

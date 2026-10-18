@@ -1,8 +1,8 @@
 import Express, { Router } from 'express';
-import { addClient } from "../../repositories/waltz.clients.repository";
-import { error } from '../../util/chalk_colors';
-import { typeValidator } from '../middleware/validation.middleware';
-import { CreateClientSchema } from '../validators/waltz.ops.validators';
+import { addClient } from "../../repositories/waltz.clients.repository.js";
+import { error } from '../../util/chalk_colors.js';
+import typeValidator from '../middleware/validation.middleware.js';
+import { CreateClientSchema } from '../validators/waltz.ops.validators.js';
 
 const route = Router()
 

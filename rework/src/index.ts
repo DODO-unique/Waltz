@@ -1,6 +1,7 @@
 import Express from 'express';
-import route from './modules/routes/routes';
-import {log} from './util/chalk_colors';
+import route from './modules/routes/routes.js';
+import {log} from './util/chalk_colors.js';
+import redis from './lib/redis.js';
 
 const app = Express();
 app.use(Express.json())
