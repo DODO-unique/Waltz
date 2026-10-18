@@ -21,7 +21,10 @@ route.post("/api/addUser", Express.json(), typeValidator(CreateClientSchema), as
         )
     }
     
-    return res.status(201).send("Success!")
+    return res.status(201).send({
+        clientId: result.details.clients.id,
+        clientSecret: result.details.security.client_secret
+    })
 }) 
 
 export default route;   
