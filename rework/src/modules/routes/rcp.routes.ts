@@ -9,6 +9,21 @@ import { genAuthSchema } from "../validators/ops.generate.validator";
 
 const route = Router();
 
+route.post("/redis/status", async (req, res) => {
+    log("Creating a redis entry. Query status/check to if it exists")
+    await redisEntry({
+        Id: req.body.Id,
+        value: req.body.value,
+        expiry: req.body.expiry
+    })
+        res.status(201).send({ message: "Redis entry created" });
+})
+
+route.get("/redis/status/check", async (req, res) => {
+    const result = await redisCheck(req.query.key as string)
+    res.send(result)
+})
+
 route.get("/status", (req, res) => {
     return res.status(200).send("Service is available.")
 })
