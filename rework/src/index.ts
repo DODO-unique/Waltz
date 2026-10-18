@@ -3,6 +3,10 @@ import route from './modules/routes/routes';
 import {log} from './util/chalk_colors';
 
 const app = Express();
+app.use(Express.json())
+
+await redis.connect();
+log("Redis Connected!")
 
 const PORT = 3000;
 
