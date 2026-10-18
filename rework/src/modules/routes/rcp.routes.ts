@@ -2,11 +2,13 @@ import { Router } from "express";
 import typeValidator from "../middleware/validation.middleware.js";
 import { operationalRequestSchema, operationalRequestType } from "../validators/operations.validators.js";
 import { autethenticator } from "../middleware/authention.middleware.js";
-import { error, success } from "../../util/chalk_colors.js";
+import { log, error, success } from "../../util/chalk_colors.js";
 import { getClientContract } from "../../repositories/operational.repository.js";
 import { genAuthSchema } from "../validators/ops.generate.validator.js";
-import { log } from "../../util/chalk_colors.js";
-import { redisCheck, redisEntry } from "../../repositories/redis/ops.transactions.js";
+import { createTransaction, getTransaction, redisCheck, redisEntry } from "../../repositories/redis/ops.transactions.js";
+import process from "node:process";
+
+const BASE_URL = process.env.BASE_URL;
 
 
 const route = Router();
@@ -30,6 +32,14 @@ route.get("/status", (req, res) => {
     return res.status(200).send("Service is available.")
 })
 
+route.get("/request/fetch", async (req, res) => {
+    const result = await getTransaction(req.query.tkey as string)
+    return res.send({
+        Tkey : req.query.tkey,
+        Tvalue: result
+    })
+})
+
 route.post("/request", autethenticator(), async (req, res) => {
     const reqBody = operationalRequestSchema.safeParse(req.body)
 
@@ -42,11 +52,36 @@ route.post("/request", autethenticator(), async (req, res) => {
     if (reqBody.data.reqType === "auth") {
         const contract = await getClientContract(reqBody.data.ID, "auth")
         if (!contract.success) {
-            res.status(400).send(contract.details)
+            error("The error:", contract.details)
+            return res.status(400).send(contract.details)
         }
+        log(contract.details)
         const contractSchema = genAuthSchema(contract.details)
-        const parsedContract = contractSchema.safeParse(reqBody.data)
+        const parsedContract = contractSchema.safeParse(reqBody.data.reqBody)
         // we parsed up a auth contract. We would now setup a redis contract
+        if (!parsedContract.success) {
+            error("An Error occured while parsing request body for contract schema. The error:", parsedContract.error)
+            return res.status(400).send(parsedContract.error)
+        }
+        // create a transaction
+        const transactionId = crypto.randomUUID()
+        const transactionURL = `https://${BASE_URL}/login`
+        
+        const result = await createTransaction({
+            trasactionId: transactionId,
+            transactionURL: transactionURL,
+            expiry: 600 //10 minutes
+        })
+
+        if (result !== "OK") {
+            error("Error Occured while creating transaction entry. Aborting... ")
+            return res.status(400).send("Could not create redis entry")
+        }
+
+        return res.status(200).send({
+            transactionId: transactionId,
+            transactionURL: transactionURL
+        })
     }
 })
 
