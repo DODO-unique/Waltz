@@ -1,28 +1,5 @@
 import { z } from 'zod';
-const AuthContractSchema = z.object({
-  identifier: z
-    .object({
-      email: z.boolean().default(false),
-      username: z.boolean().default(false),
-    })
-    .refine(
-      (identifiers) =>
-        identifiers.email || identifiers.username,
-      {
-        message:
-          "At least one of email or username must be enabled",
-      },
-    ),
-  password: z.boolean().default(false),
-});
-
-const RegistrationContractSchema = z.object({
-  username: z.boolean().default(false),
-  fullname: z.boolean().default(false),
-  age: z.boolean().default(false),
-  address: z.boolean().default(false),
-  password: z.boolean().default(false),
-});
+import { AuthContractSchema, RegistrationContractSchema } from './waltz.contract.validator.js';
 
 export const ContractSchema = z.object({
   clientId: z.uuid(),
