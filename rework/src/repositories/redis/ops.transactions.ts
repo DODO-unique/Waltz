@@ -13,9 +13,19 @@ export type testRedisPaylaod = {
 }
 
 export async function createTransaction(payload: trasactionPayload) {
-    await redis.set(payload.trasactionId, payload.transactionURL, {
+    const result = await redis.set(payload.trasactionId, payload.transactionURL, {
         EX: payload.expiry
     })
+    return result
+}
+
+export async function getTransaction(key: string) {
+    const result = await redis.get(key);
+    return result
+}
+
+export async function checkTransaction(key: string) {
+    return await redis.get(key)
 }
 
 export async function redisEntry(payload: testRedisPaylaod) {
