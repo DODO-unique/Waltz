@@ -1,5 +1,5 @@
 import { prisma } from '../lib/prisma.js';
-import {ContractSchema, CreateClient, CreateClientSchema, SecuritySchema} from '../modules/validators/waltz.ops.validators.js';
+import {ContractPacketSchema, CreateClient, CreateClientSchema, SecuritySchema} from '../modules/validators/waltz.ops.validators.js';
 import { persistenceResult } from '../types/waltz.types.js';
 import { error, success } from '../util/chalk_colors.js';
 import { addSecurity } from './waltz.security.repository.js';
@@ -31,7 +31,7 @@ export async function addClient(payload: CreateClient) : Promise<persistenceResu
             passwordHash: validatedPayload.security.passwordHash
         }))
         success(securityResult.details)
-        const contractResult: persistenceResult = await addContract(ContractSchema.parse({
+        const contractResult: persistenceResult = await addContract(ContractPacketSchema.parse({
             clientId: client.id,
             contract: validatedPayload.contracts.contract
         }))
