@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
-import { get_secret } from "../../repositories/operational.repository.js";
+import { getSecret } from "../../repositories/operational.repository.js";
 import { error } from "../../util/chalk_colors.js";
 
 export const autethenticator = (): RequestHandler => {
@@ -21,7 +21,7 @@ export const autethenticator = (): RequestHandler => {
             return res.status(400).send("No clientID provided in the post body.")
         }
 
-        const secret: null | string = await get_secret(clientId)
+        const secret: null | string = await getSecret(clientId)
 
         if (!secret) {
             error("Client not found. Sending 404 and aborting...")
