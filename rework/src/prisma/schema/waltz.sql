@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS security (
 
 CREATE TABLE IF NOT EXISTS contracts (
     id UUID PRIMARY KEY,
+    callback_url TEXT NOT NULL,
     client_id UUID NOT NULL REFERENCES clients(id),
     contract JSONB NOT NULL
 );

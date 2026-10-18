@@ -17,10 +17,11 @@ model clients {
 }
 
 model contracts {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  client_id String  @db.Uuid
-  contract  Json
-  clients   clients @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  client_id    String  @db.Uuid
+  callback_url String
+  contract     Json
+  clients      clients @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model security {
