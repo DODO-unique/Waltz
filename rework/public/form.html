@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Account</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./__TRANSACTION_ID__/form.js" defer></script>
+  </head>
+  <body>
+    <main class="form-page">
+      <section class="form-card" aria-labelledby="form-title">
+        <h1 id="form-title">Account</h1>
+        <p id="form-loading" role="status">Preparing form…</p>
+        <p id="form-error" role="alert" hidden></p>
+        <p id="form-attempts" role="status" aria-live="polite" hidden></p>
+        <p id="form-success" role="status" hidden></p>
+
+        <form id="account-form" hidden novalidate>
+          <div id="form-fields"></div>
+          <button id="form-submit" type="submit">Continue</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

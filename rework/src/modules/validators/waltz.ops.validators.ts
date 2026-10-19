@@ -10,6 +10,7 @@ export const ContractSchema = z.object({
 
 export const ContractPacketSchema = z.object({
   id: z.uuid().optional(),
+  callback_url: z.string(),
   clientId: z.uuid(),
   contract: ContractSchema
 });

@@ -10,7 +10,7 @@ route.get("/api", (req, res) => {
     res.send("Got you!")
 })
 
-route.post("/api/addUser", Express.json(), typeValidator(CreateClientSchema), async (req, res) => {
+route.post("/api/add/client", typeValidator(CreateClientSchema), async (req, res) => {
 
     const result = await addClient(req.body)
 

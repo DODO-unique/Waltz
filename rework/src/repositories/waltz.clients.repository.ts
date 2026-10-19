@@ -33,6 +33,7 @@ export async function addClient(payload: CreateClient) : Promise<persistenceResu
         success(securityResult.details)
         const contractResult: persistenceResult = await addContract(ContractPacketSchema.parse({
             clientId: client.id,
+            callback_url: validatedPayload.contracts.callback_url,
             contract: validatedPayload.contracts.contract
         }))
         success(contractResult.details)

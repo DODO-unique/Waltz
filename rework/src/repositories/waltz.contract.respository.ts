@@ -10,6 +10,7 @@ export async function addContract(payload: ContractPacket) : Promise<persistence
         const contract = await prisma.contracts.create({
         data: {
             contract: payload.contract,
+            callback_url: payload.callback_url,
             clients: {
                 connect: {
                     id: payload.clientId

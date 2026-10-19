@@ -7,7 +7,7 @@ const typeValidator = (schema: z.ZodType): RequestHandler => {
        const result = schema.safeParse(req.body)
        if (!result.success) {
             error(result.error)
-           return res.status(400).send("Waltz type validator middleware: Incorrect request format")
+            return res.status(400).send("Waltz type validator middleware: Incorrect request format")
        }
        req.body = result.data
        next()

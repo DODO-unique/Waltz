@@ -1,12 +1,12 @@
 import { Router } from "express";
-import typeValidator from "../middleware/validation.middleware.js";
-import { operationalRequestSchema, operationalRequestType } from "../validators/operations.validators.js";
+import { operationalRequestSchema } from "../validators/operations.validators.js";
 import { autethenticator } from "../middleware/authention.middleware.js";
 import { log, error, success } from "../../util/chalk_colors.js";
 import { getClientContract } from "../../repositories/operational.repository.js";
-import { genAuthSchema } from "../validators/ops.generate.validator.js";
+import { genAuthSchema, genRegistrationSchema } from "../validators/ops.generate.validator.js";
 import { createTransaction, getTransaction, redisCheck, redisEntry } from "../../repositories/redis/ops.transactions.js";
 import process from "node:process";
+import { AuthContract } from "../validators/waltz.contract.validator.js";
 
 const BASE_URL = process.env.BASE_URL;
 
@@ -58,18 +58,26 @@ route.post("/request", autethenticator(), async (req, res) => {
         log(contract.details)
         const contractSchema = genAuthSchema(contract.details)
         const parsedContract = contractSchema.safeParse(reqBody.data.reqBody)
-        // we parsed up a auth contract. We would now setup a redis contract
         if (!parsedContract.success) {
             error("An Error occured while parsing request body for contract schema. The error:", parsedContract.error)
             return res.status(400).send(parsedContract.error)
         }
+        // we parsed up a auth contract. We must create configurations. These configurations would be stored in Redis schema
+
         // create a transaction
         const transactionId = crypto.randomUUID()
-        const transactionURL = `https://${BASE_URL}/login`
+        const transactionURL = `https://${BASE_URL}/waltz/${transactionId}`
         
         const result = await createTransaction({
-            trasactionId: transactionId,
-            transactionURL: transactionURL,
+            tKey: transactionId,
+            tValue: {
+                rtype: "auth",
+                contract: contract.details,
+                schema: contractSchema.shape,
+                callback_url: contract.callback_url,
+                clientId: reqBody.data.ID.clientId,
+                authReqData: parsedContract.data
+            },
             expiry: 600 //10 minutes
         })
 
@@ -83,6 +91,43 @@ route.post("/request", autethenticator(), async (req, res) => {
             transactionURL: transactionURL
         })
     }
+
+    const contract = await getClientContract(reqBody.data.ID, "register")
+    if (!contract.success) {
+        error("The error:", contract.details)
+        return res.status(400).send(contract.details)
+    }
+    log(contract.details)
+    const contractSchema = genRegistrationSchema(contract.details)
+    const parsedContract = contractSchema.safeParse(reqBody.data.reqBody)
+    if (!parsedContract.success) {
+        error("An Error occured while parsing request body for contract schema. The error:", parsedContract.error)
+        return res.status(400).send(parsedContract.error)
+    }
+
+    const transactionId = crypto.randomUUID()
+    const transactionURL = `https://${BASE_URL}/waltz/${transactionId}`
+
+    const result = await createTransaction({
+        tKey: transactionId,
+        tValue: {
+            rtype: "register",
+            contract: contract.details,
+            schema: contractSchema.shape,
+            callback_url: contract.callback_url
+        },
+        expiry: 600 //10 minutes
+    })
+
+    if (result !== "OK") {
+        error("Error Occured while creating transaction entry. Aborting... ")
+        return res.status(400).send("Could not create redis entry")
+    }
+
+    return res.status(200).send({
+        transactionId: transactionId,
+        transactionURL: transactionURL
+    })
 })
 
 export default route;
