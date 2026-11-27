@@ -12,16 +12,20 @@ export const autethenticator = (): RequestHandler => {
         if (typeof req.headers.authorization === "undefined") {
             return res.status(400).send("Waltz Authenticator middleware: No authorization header found.")
         }
+
+        // leave the bearer behind, get the token
         const token = req.headers.authorization?.split(" ")[1]
 
+        // we need the client id to fetch client secret to verify jwt
         const { clientId } = req.body
 
         if (typeof clientId === "undefined") {
             error("No clientId provided or incorrect field name given in the post body")
-            error("Aborting with 404 ...")
+            error("Aborting with 400 ...")
             return res.status(400).send("No clientID provided in the post body.")
         }
 
+        // get client's secret. We will need it for verifying the jwt
         const secret: null | string = await getSecret(clientId)
 
         if (!secret) {
