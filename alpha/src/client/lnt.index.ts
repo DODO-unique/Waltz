@@ -6,11 +6,11 @@ import { fail } from "../common/util/logger.js";
 
 const client = Router();
 
-client.get("/api", (req, res) => {
+client.get("/health", (req, res) => {
     res.send("Got you!")
 })
 
-client.post("/api/add/client", typeValidator(CreateClientSchema), async (req, res) => {
+client.post("/add/client", typeValidator(CreateClientSchema), async (req, res) => {
 
     const result = await addClient(req.body)
 
