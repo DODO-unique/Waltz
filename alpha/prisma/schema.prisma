@@ -17,17 +17,17 @@ model clients {
 }
 
 model contracts {
-  id           String  @id @db.Uuid
-  callback_url String
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   client_id    String  @db.Uuid
+  callback_url String
   contract     Json
   clients      clients @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model security {
   id            String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  client_id     String  @unique @db.Uuid
+  client_id     String  @unique(map: "security_client_id_key") @db.Uuid
   client_secret String
   password_hash String
-  clients       clients @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  clients       clients @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "security_client_id_fkey")
 }
